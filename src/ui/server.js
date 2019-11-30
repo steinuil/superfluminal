@@ -15,7 +15,7 @@ function Server({ server, dispatch }) {
   return (
     <div>
       <h3>
-        Synapse
+        synapse
         <button
           className="btn btn-sm btn-outline-danger pull-right"
           onClick={() => {
