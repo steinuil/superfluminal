@@ -1,4 +1,4 @@
-import { push } from 'react-router-redux';
+import { push } from 'connected-react-router';
 
 // Pushes but preserves the query string
 export function push_path(to) {

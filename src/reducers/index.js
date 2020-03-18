@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { routerReducer } from 'react-router-redux'
+import { connectRouter } from 'connected-react-router';
 import socket from './socket';
 import selection from './selection';
 import subscribe from './subscribe';
@@ -10,7 +10,7 @@ import files from './files';
 import peers from './peers';
 import trackers from './trackers';
 
-const root = combineReducers({
+const root = (history) => combineReducers({
   socket,
   selection,
   subscribe,
@@ -20,7 +20,7 @@ const root = combineReducers({
   files,
   peers,
   trackers,
-  router: routerReducer
+  router: connectRouter(history)
 });
 
 export default root;

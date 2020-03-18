@@ -4,11 +4,11 @@ import {
   Alert,
   Card,
   CardHeader,
-  CardBlock,
   FormGroup,
   Progress,
   Label,
-  Input
+  Input,
+  CardBody
 } from 'reactstrap';
 import { initialize } from '..';
 import { SOCKET_STATE } from '../actions/socket';
@@ -33,9 +33,9 @@ class ConnectionOverlay extends Component {
         password,
         autoconnect: !!uri
       });
-      if (uri) {
-        initialize(getURI(this.state.uri, this.state.password));
-      }
+      // if (uri) {
+      //   initialize(getURI(this.state.uri, this.state.password));
+      // }
     }
   }
 
@@ -57,10 +57,10 @@ class ConnectionOverlay extends Component {
         <div className="connection-overlay">
           <Card>
             <CardHeader>Connect to synapse</CardHeader>
-            <CardBlock>
+            <CardBody>
               <p className="text-center">Connecting...</p>
               <Progress value={100} animated />
-            </CardBlock>
+            </CardBody>
           </Card>
         </div>
       );
@@ -70,7 +70,7 @@ class ConnectionOverlay extends Component {
       <div className="connection-overlay">
         <Card>
           <CardHeader>Connect to synapse</CardHeader>
-          <CardBlock>
+          <CardBody>
             {socket.reason && <Alert color="info">{socket.reason}</Alert>}
             <FormGroup>
               <Label for="socket-uri">Server URI</Label>
@@ -105,7 +105,7 @@ class ConnectionOverlay extends Component {
               className="btn btn-primary"
               onClick={this.connect}
             >{socket.reason ? "Reconnect" : "Connect"}</button>
-          </CardBlock>
+          </CardBody>
         </Card>
       </div>
     );

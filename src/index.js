@@ -1,14 +1,11 @@
-import "babel-polyfill";
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { ConnectedRouter } from 'react-router-redux';
+import { ConnectedRouter } from 'connected-react-router';
 import query from 'query-string';
-import 'preact/devtools';
-import './polyfills';
 
 import store, { create, history } from './store';
-import scss from '../scss/main.scss';
+import '../scss/main.scss';
 import { ws_init } from './socket';
 import { filter_subscribe } from './actions/filter_subscribe';
 import { socket_uri, socket_update, SOCKET_STATE } from './actions/socket';
@@ -16,6 +13,14 @@ import { search_criteria } from './search';
 
 import Main from './ui/main';
 import Connection from './ui/connection';
+
+Set.prototype.difference = function(set) {
+  var diff = new Set(this);
+  for (var v of set) {
+    diff.delete(v);
+  }
+  return diff;
+};
 
 export function initialize(uri) {
   store.dispatch(socket_uri(uri));
@@ -41,12 +46,12 @@ const render = main =>
 
 render(<Main />);
 
-if (module.hot) {
-  module.hot.accept('./ui/main.js', () => {
-   const NextMain = require('./ui/main.js').default;
-   render(<NextMain />);
-  });
-}
+// if (module.hot) {
+//   module.hot.accept('./ui/main.js', () => {
+//    const NextMain = require('./ui/main.js').default;
+//    render(<NextMain />);
+//   });
+// }
 
 navigator.registerProtocolHandler("magnet",
   window.location.origin + "/add-torrent/%s",

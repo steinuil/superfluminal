@@ -1,18 +1,16 @@
 import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
 import { connect } from 'react-redux';
-import { push } from 'react-router-redux';
+import { push } from 'connected-react-router';
 import {
   Progress,
   Card,
-  CardBlock,
   CardTitle,
   CardText,
   FormGroup,
   Label,
   Input
 } from 'reactstrap';
-import fetch from 'isomorphic-fetch';
 import bencode from 'bencode';
 import moment from 'moment';
 import ToggleContainer from './toggle_container';
@@ -179,7 +177,7 @@ class AddTorrent extends Component {
 
     return (
       <Card>
-        <CardBlock>
+        <CardBody>
           <TorrentOptions
             id="new-torrent"
             start={start}
@@ -195,7 +193,7 @@ class AddTorrent extends Component {
             uploadThrottleChanged={uploadThrottle =>
               this.setState({ uploadThrottle })}
           />
-        </CardBlock>
+        </CardBody>
       </Card>
     );
   }
@@ -212,7 +210,7 @@ class AddTorrent extends Component {
     return (
       <Card style={{marginBottom: "1rem"}}>
         {torrent &&
-          <CardBlock>
+          <CardBody>
             <CardTitle>{magnet && "Magnet link" || file.name}</CardTitle>
               <CardText>
               <dl style={{marginBottom: "0"}}>
@@ -233,7 +231,7 @@ class AddTorrent extends Component {
                 })}
               </dl>
             </CardText>
-          </CardBlock>
+          </CardBody>
         }
         <ToggleContainer className="form-group" title="Options">
           {this.renderOptions.bind(this)()}

@@ -9,9 +9,9 @@ import {
   DropdownItem,
   Collapse,
   Card,
-  CardBlock,
   Progress,
   Input,
+  CardBody,
 } from 'reactstrap';
 import moment from 'moment';
 import sha1 from 'js-sha1';
@@ -236,7 +236,7 @@ class Torrent extends Component {
         </ButtonGroup>
         <Collapse isOpen={this.state.infoShown}>
           <Card style={{marginBottom: "1rem"}}>
-            <CardBlock>
+            <CardBody>
               <button
                 className="btn btn-sm btn-outline-primary pull-right"
                 onClick={() => {
@@ -270,12 +270,12 @@ class Torrent extends Component {
                 uploadThrottleChanged={throttle_up =>
                   dispatch(updateResource({ id: torrent.id, throttle_up }))}
               />
-            </CardBlock>
+            </CardBody>
           </Card>
         </Collapse>
         <Collapse isOpen={this.state.filesShown}>
           <Card style={{marginBottom: "1rem"}}>
-            <CardBlock style={{padding: "0"}}>
+            <CardBody style={{padding: "0"}}>
               <div className="files flex-table" style={{marginBottom: "0"}}>
                 {this.state.filesShown
                   ? files.slice()
@@ -288,12 +288,12 @@ class Torrent extends Component {
                     />)
                   : null}
               </div>
-            </CardBlock>
+            </CardBody>
           </Card>
         </Collapse>
         <Collapse isOpen={this.state.trackersShown}>
           <Card style={{marginBottom: "1rem"}}>
-            <CardBlock>
+            <CardBody>
               {trackers.map(tracker =>
                 <div>
                   <h5>{(() => {
@@ -319,12 +319,12 @@ class Torrent extends Component {
                   </dl>
                 </div>
               )}
-            </CardBlock>
+            </CardBody>
           </Card>
         </Collapse>
         <Collapse isOpen={this.state.peersShown}>
           <Card style={{marginBottom: "1rem"}}>
-            <CardBlock style={{padding: "0"}}>
+            <CardBody style={{padding: "0"}}>
               <div className="peers flex-table" style={{marginBottom: "0"}}>
                 {this.state.peersShown ? peers.map(peer => <Peer peer={peer} />) : null}
               </div>
@@ -332,7 +332,7 @@ class Torrent extends Component {
                 <div style={{padding: "0.5rem 0 0 0.5rem"}}>
                   <p>No connected peers.</p>
                 </div>}
-            </CardBlock>
+            </CardBody>
           </Card>
         </Collapse>
       </div>
