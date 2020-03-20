@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { formatBitrate, formatAmount } from '../bitrate';
+import { formatBitrate, formatAmount } from '../Bitrate';
 import { ws_disconnect } from '../socket';
 import DateDisplay from './date';
 import Ratio from './ratio';
@@ -19,47 +19,57 @@ function Server({ server, dispatch }) {
         <button
           className="btn btn-sm btn-outline-danger pull-right"
           onClick={() => {
-            localStorage.removeItem("autoconnect");
-            localStorage.removeItem("password");
+            localStorage.removeItem('autoconnect');
+            localStorage.removeItem('password');
             ws_disconnect();
           }}
-        >Disconnect</button>
+        >
+          Disconnect
+        </button>
       </h3>
       <dl>
         <dt>Running since</dt>
-        <dd><DateDisplay when={moment(server.started)} /></dd>
+        <dd>
+          <DateDisplay when={moment(server.started)} />
+        </dd>
         <dt>Disk space free</dt>
         <dd>{formatAmount(server.free_space)}</dd>
         <dt>Current network use</dt>
         <dd>
-          {`${
-          formatBitrate(server.rate_up)
-          } up, ${
-          formatBitrate(server.rate_down)
-          } down`}
+          {`${formatBitrate(server.rate_up)} up, ${formatBitrate(
+            server.rate_down
+          )} down`}
         </dd>
         <dt>Global download throttle</dt>
         <dd>
           <Throttle
-            prop={"dl-throttle-server"}
+            prop={'dl-throttle-server'}
             global={false}
             limit={server.throttle_down}
-            onChange={throttle_down => dispatch(updateResource({
-              id: server.id,
-              throttle_down
-            }))}
+            onChange={(throttle_down) =>
+              dispatch(
+                updateResource({
+                  id: server.id,
+                  throttle_down,
+                })
+              )
+            }
           />
         </dd>
         <dt>Global upload throttle</dt>
         <dd>
           <Throttle
-            prop={"ul-throttle-server"}
+            prop={'ul-throttle-server'}
             global={false}
             limit={server.throttle_up}
-            onChange={throttle_up => dispatch(updateResource({
-              id: server.id,
-              throttle_up
-            }))}
+            onChange={(throttle_up) =>
+              dispatch(
+                updateResource({
+                  id: server.id,
+                  throttle_up,
+                })
+              )
+            }
           />
         </dd>
         <dt>Lifetime ratio</dt>
@@ -78,4 +88,4 @@ function Server({ server, dispatch }) {
   );
 }
 
-export default connect(state => ({ server: state.server }))(Server);
+export default connect((state) => ({ server: state.server }))(Server);

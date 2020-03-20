@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import { Route, DefaultRoute } from 'react-router';
-import { connect } from 'react-redux';
 import Nav from './navigation';
 import TorrentTable from './torrent_table';
-import AddTorrent from './add_torrent';
 import TorrentDetails from './torrent_details';
 import Server from './server';
 import SearchHelp from './search_help';
 import ConnectionOverlay from './connection';
+import { AddTorrent } from './AddTorrent';
 
 export default class Main extends Component {
   render() {

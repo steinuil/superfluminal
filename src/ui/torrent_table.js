@@ -1,15 +1,19 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import FontAwesome from 'react-fontawesome';
-import selectTorrent, { UNION, SUBTRACT, EXCLUSIVE } from '../actions/selection';
-import { formatBitrate, formatAmount } from '../bitrate';
-import TorrentProgress from './torrent_progress';
+import selectTorrent, {
+  UNION,
+  SUBTRACT,
+  EXCLUSIVE,
+} from '../actions/selection';
+import { formatBitrate, formatAmount } from '../Bitrate';
+import { TorrentProgress } from './TorrentProgress';
 
 const name_style = {
   maxWidth: `${window.innerWidth * 0.25}px`,
   textOverflow: 'ellipsis',
   overflowX: 'hidden',
-  whiteSpace: 'nowrap'
+  whiteSpace: 'nowrap',
 };
 
 class _Torrent extends Component {
@@ -29,36 +33,40 @@ class _Torrent extends Component {
     const ratio = up / down;
     return (
       <tr
-        className={`torrent ${
-          t.status
-        } ${
-          selection.indexOf(t.id) !== -1 ? "selected" : ""
+        className={`torrent ${t.status} ${
+          selection.indexOf(t.id) !== -1 ? 'selected' : ''
         }`}
       >
         <td>
           <input
             type="checkbox"
             checked={selection.indexOf(t.id) !== -1}
-            onChange={e =>
-              dispatch(selectTorrent([t.id], e.target.checked ? UNION : SUBTRACT))
+            onChange={(e) =>
+              dispatch(
+                selectTorrent([t.id], e.target.checked ? UNION : SUBTRACT)
+              )
             }
           />
         </td>
         <td style={name_style}>
           <a
             href={`/torrents/${t.id}`}
-            onClick={e => {
+            onClick={(e) => {
               e.preventDefault();
               dispatch(selectTorrent([t.id], EXCLUSIVE));
             }}
-          >{t.name}</a>
+          >
+            {t.name}
+          </a>
         </td>
         <td>{formatBitrate(t.rate_up)}</td>
         <td>{formatBitrate(t.rate_down)}</td>
-        <td>{isFinite(ratio) ? `${ratio.toFixed(2)}` : "∞"}</td>
+        <td>{isFinite(ratio) ? `${ratio.toFixed(2)}` : '∞'}</td>
         <td>{formatAmount(up)}</td>
         <td>{formatAmount(down)}</td>
-        <td><TorrentProgress torrent={t} /></td>
+        <td>
+          <TorrentProgress torrent={t} />
+        </td>
       </tr>
     );
   }
@@ -72,37 +80,37 @@ const Torrent = connect((state, props) => {
 })(_Torrent);
 
 const comparators = {
-  "name": (a, b) => a.name.localeCompare(b.name),
-  "up": (a, b) => a.rate_up - b.rate_up,
-  "down": (a, b) => a.rate_down - b.rate_down,
-  "ul": (a, b) => a.transferred_up - b.transferred_up,
-  "dl": (a, b) => a.transferred_down - b.transferred_down,
-  "ratio": (a, b) => {
-    const ratioA = a.transferred_up/a.transferred_down;
-    const ratioB = b.transferred_up/b.transferred_down;
+  name: (a, b) => a.name.localeCompare(b.name),
+  up: (a, b) => a.rate_up - b.rate_up,
+  down: (a, b) => a.rate_down - b.rate_down,
+  ul: (a, b) => a.transferred_up - b.transferred_up,
+  dl: (a, b) => a.transferred_down - b.transferred_down,
+  ratio: (a, b) => {
+    const ratioA = a.transferred_up / a.transferred_down;
+    const ratioB = b.transferred_up / b.transferred_down;
     if (!isFinite(ratioA - ratioB)) {
       return !isFinite(ratioA) ? 1 : -1;
     } else {
       return ratioA - ratioB;
     }
   },
-  "progress": (a, b) => a.progress - b.progress,
-}
+  progress: (a, b) => a.progress - b.progress,
+};
 
 class TorrentTable extends Component {
   constructor() {
     super();
     this.state = {
-      sortBy: "name",
+      sortBy: 'name',
       sortAsc: true,
     };
   }
 
   updateSort(column) {
     if (column === this.state.sortBy) {
-      this.setState({ sortBy: column, sortAsc: !this.state.sortAsc});
+      this.setState({ sortBy: column, sortAsc: !this.state.sortAsc });
     } else {
-      this.setState({ sortBy: column, sortAsc: this.state.sortAsc});
+      this.setState({ sortBy: column, sortAsc: this.state.sortAsc });
     }
   }
 
@@ -111,31 +119,36 @@ class TorrentTable extends Component {
     const { sortBy, sortAsc } = this.state;
 
     const comparator = (a, b) => comparators[sortBy](a, b) * (sortAsc ? 1 : -1);
-    const arrowStyle = { marginLeft: "5px", marginRight: "5px" };
-    const sortArrow = sortAsc === true
-      ? <FontAwesome name="angle-up" style={arrowStyle} />
-      : <FontAwesome name="angle-down" style={arrowStyle} />;
+    const arrowStyle = { marginLeft: '5px', marginRight: '5px' };
+    const sortArrow =
+      sortAsc === true ? (
+        <FontAwesome name="angle-up" style={arrowStyle} />
+      ) : (
+        <FontAwesome name="angle-down" style={arrowStyle} />
+      );
 
-    const sortCol = (name, minWidth) => <th
-      style={{ minWidth }}
-      onClick={e => {
-        e.preventDefault();
-        this.updateSort(name)
-      }}
-    >
-      {name}
-      {sortBy === name ? sortArrow : null}
-    </th>;
+    const sortCol = (name, minWidth) => (
+      <th
+        style={{ minWidth }}
+        onClick={(e) => {
+          e.preventDefault();
+          this.updateSort(name);
+        }}
+      >
+        {name}
+        {sortBy === name ? sortArrow : null}
+      </th>
+    );
 
     return (
       <table className="table torrents">
         <thead>
           <tr>
-            <th style={{width: "1px"}}>
+            <th style={{ width: '1px' }}>
               <input
                 type="checkbox"
                 checked={selection.length === Object.values(torrents).length}
-                onChange={e => {
+                onChange={(e) => {
                   if (selection.length > 0) {
                     dispatch(selectTorrent([], EXCLUSIVE));
                   } else {
@@ -146,38 +159,37 @@ class TorrentTable extends Component {
             </th>
             <th
               style={name_style}
-              onClick={e => {
+              onClick={(e) => {
                 e.preventDefault();
-                this.updateSort("name");
+                this.updateSort('name');
               }}
             >
               name
-              {sortBy === "name" ? sortArrow : null}
+              {sortBy === 'name' ? sortArrow : null}
             </th>
-            {sortCol("up", "65px")}
-            {sortCol("down", "85px")}
-            {sortCol("ratio", "95px")}
-            {sortCol("ul", "65px")}
-            {sortCol("dl", "75px")}
-            {sortCol("progress", "115px")}
+            {sortCol('up', '65px')}
+            {sortCol('down', '85px')}
+            {sortCol('ratio', '95px')}
+            {sortCol('ul', '65px')}
+            {sortCol('dl', '75px')}
+            {sortCol('progress', '115px')}
           </tr>
         </thead>
         <tbody>
-          {Object.values(torrents).slice().sort(comparator).map(t =>
-            <Torrent
-              dispatch={dispatch}
-              id={t.id}
-              key={t.id}
-            />
-          )}
+          {Object.values(torrents)
+            .slice()
+            .sort(comparator)
+            .map((t) => (
+              <Torrent dispatch={dispatch} id={t.id} key={t.id} />
+            ))}
         </tbody>
       </table>
     );
   }
 }
 
-export default connect(state => ({
+export default connect((state) => ({
   torrents: state.torrents,
   selection: state.selection,
-  router: state.router
+  router: state.router,
 }))(TorrentTable);

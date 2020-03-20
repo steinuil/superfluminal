@@ -5,7 +5,8 @@ import { ConnectedRouter } from 'connected-react-router';
 import query from 'query-string';
 
 import store, { create, history } from './store';
-import '../scss/main.scss';
+// import '../scss/main.scss';
+import 'bootstrap/scss/bootstrap.scss';
 import { ws_init } from './socket';
 import { filter_subscribe } from './actions/filter_subscribe';
 import { socket_uri, socket_update, SOCKET_STATE } from './actions/socket';
@@ -25,24 +26,29 @@ Set.prototype.difference = function(set) {
 export function initialize(uri) {
   store.dispatch(socket_uri(uri));
   store.dispatch(socket_update(SOCKET_STATE.CONNECTING));
-  ws_init(uri, () => {
-    const qs = query.parse(window.location.search);
-    store.dispatch(socket_update(SOCKET_STATE.CONNECTED));
-    store.dispatch(filter_subscribe('torrent', search_criteria(qs.s)));
-    store.dispatch(filter_subscribe('server'));
-  }, () => {
-    store.dispatch(socket_update(SOCKET_STATE.DISCONNECTED,
-      "You were disconnected."));
-  });
+  ws_init(
+    uri,
+    () => {
+      const qs = query.parse(window.location.search);
+      store.dispatch(socket_update(SOCKET_STATE.CONNECTED));
+      store.dispatch(filter_subscribe('torrent', search_criteria(qs.s)));
+      store.dispatch(filter_subscribe('server'));
+    },
+    () => {
+      store.dispatch(
+        socket_update(SOCKET_STATE.DISCONNECTED, 'You were disconnected.')
+      );
+    }
+  );
 }
 
-const render = main =>
+const render = (main) =>
   ReactDOM.render(
     <Provider store={store}>
-      <ConnectedRouter history={history}>
-        {main}
-      </ConnectedRouter>
-    </Provider>, document.getElementById('root'));
+      <ConnectedRouter history={history}>{main}</ConnectedRouter>
+    </Provider>,
+    document.getElementById('root')
+  );
 
 render(<Main />);
 
@@ -53,8 +59,10 @@ render(<Main />);
 //   });
 // }
 
-navigator.registerProtocolHandler("magnet",
-  window.location.origin + "/add-torrent/%s",
-  "Open magnet link with receptor");
+navigator.registerProtocolHandler(
+  'magnet',
+  window.location.origin + '/add-torrent/%s',
+  'Open magnet link with receptor'
+);
 
 Notification && Notification.requestPermission();

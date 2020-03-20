@@ -16,7 +16,7 @@ import {
 import moment from 'moment';
 import sha1 from 'js-sha1';
 import TorrentOptions from './torrent_options';
-import TorrentProgress from './torrent_progress';
+import { TorrentProgress } from './TorrentProgress';
 import ws_send from '../socket';
 import store from '../store';
 import DateDisplay from './date';
@@ -24,26 +24,30 @@ import selectTorrent, {
   EXCLUSIVE,
   UNION,
   SUBTRACT,
-  NONE
+  NONE,
 } from '../actions/selection';
 import { updateResource } from '../actions/resources';
-import { formatBitrate } from '../bitrate';
+import { formatBitrate } from '../Bitrate';
 
 const dlURI = (uri, token, id) => {
-  const dlToken = encodeURIComponent(btoa(String.fromCharCode(...new Uint8Array(sha1.arrayBuffer(id + token)))));
+  const dlToken = encodeURIComponent(
+    btoa(String.fromCharCode(...new Uint8Array(sha1.arrayBuffer(id + token))))
+  );
   return `${uri.replace('ws', 'http')}/dl/${id}?token=${dlToken}`;
 };
 
 function basename(path) {
-  const parts = path.split("/");
+  const parts = path.split('/');
   return parts[parts.length - 1];
 }
 
 class File extends Component {
   shouldComponentUpdate(nextProps, _) {
-    return nextProps.file !== this.props.file
-      || nextProps.server !== this.props.server
-      || nextProps.socket !== this.props.socket;
+    return (
+      nextProps.file !== this.props.file ||
+      nextProps.server !== this.props.server ||
+      nextProps.socket !== this.props.socket
+    );
   }
 
   render() {
@@ -54,26 +58,34 @@ class File extends Component {
       <div className="file">
         <Progress
           value={file.progress * 100}
-          color={file.progress != 1.0 ? "success" : "primary"}
+          color={file.progress != 1.0 ? 'success' : 'primary'}
         >
-          {file.progress === 1.0 ?
-            "done" : `${Math.floor(file.progress * 100)}%`}
+          {file.progress === 1.0
+            ? 'done'
+            : `${Math.floor(file.progress * 100)}%`}
         </Progress>
         <div className="path" title={file.path}>
-          {file.progress === 1.0 ?
+          {file.progress === 1.0 ? (
             <a href={dlURI(uri, download_token, file.id)} target="_new">
               {basename(file.path)}
-            </a> : basename(file.path)}
+            </a>
+          ) : (
+            basename(file.path)
+          )}
         </div>
         <div>
           <Input
             type="select"
             id="priority"
             value={file.priority}
-            onChange={e => dispatch(updateResource({
-              id: file.id,
-              priority: parseInt(e.target.value)
-            }))}
+            onChange={(e) =>
+              dispatch(
+                updateResource({
+                  id: file.id,
+                  priority: parseInt(e.target.value),
+                })
+              )
+            }
           >
             <option value="0">Skip</option>
             <option value="1">Lowest</option>
@@ -97,10 +109,14 @@ class Peer extends Component {
     const { peer } = this.props;
     return (
       <div className="peer">
-        <div style={{flexGrow: 5}}>{peer.ip}</div>
-        <div style={{flexBasis: "18%"}}>{formatBitrate(peer.rate_up)} up</div>
-        <div style={{flexBasis: "18%"}}>{formatBitrate(peer.rate_down)} down</div>
-        <div style={{flexBasis: "18%"}}>has {`${(peer.availability * 100).toFixed(0)}%`}</div>
+        <div style={{ flexGrow: 5 }}>{peer.ip}</div>
+        <div style={{ flexBasis: '18%' }}>{formatBitrate(peer.rate_up)} up</div>
+        <div style={{ flexBasis: '18%' }}>
+          {formatBitrate(peer.rate_down)} down
+        </div>
+        <div style={{ flexBasis: '18%' }}>
+          has {`${(peer.availability * 100).toFixed(0)}%`}
+        </div>
       </div>
     );
   }
@@ -109,14 +125,11 @@ class Peer extends Component {
 // TODO: move to separate component
 function CollapseToggle({ text, onToggle, open }) {
   return (
-    <button
-      className="btn btn-sm btn-default"
-      onClick={onToggle}
-    >
+    <button className="btn btn-sm btn-default" onClick={onToggle}>
       {text}
       <FontAwesome
-        name={`caret-${open ? "up" : "down"}`}
-        style={{marginLeft: "0.25rem"}}
+        name={`caret-${open ? 'up' : 'down'}`}
+        style={{ marginLeft: '0.25rem' }}
       />
     </button>
   );
@@ -130,27 +143,29 @@ class Torrent extends Component {
       filesShown: false,
       trackersShown: false,
       peersShown: false,
-      removeDropdown: false
+      removeDropdown: false,
     };
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return nextProps.torrent !== this.props.torrent
-      || nextProps.trackers !== this.props.trackers
-      || nextProps.files !== this.props.files
-      || nextProps.peers !== this.props.peers
-      || nextState.removeDropdown !== this.state.removeDropdown
-      || nextState.peersShown !== this.state.peersShown
-      || nextState.trackersShown !== this.state.trackersShown
-      || nextState.filesShown !== this.state.filesShown
-      || nextState.infoShown !== this.state.infoShown;
+    return (
+      nextProps.torrent !== this.props.torrent ||
+      nextProps.trackers !== this.props.trackers ||
+      nextProps.files !== this.props.files ||
+      nextProps.peers !== this.props.peers ||
+      nextState.removeDropdown !== this.state.removeDropdown ||
+      nextState.peersShown !== this.state.peersShown ||
+      nextState.trackersShown !== this.state.trackersShown ||
+      nextState.filesShown !== this.state.filesShown ||
+      nextState.infoShown !== this.state.infoShown
+    );
   }
 
   toggleTorrentState(torrent) {
-    if (torrent.status === "paused") {
-      ws_send("RESUME_TORRENT", { id: torrent.id });
+    if (torrent.status === 'paused') {
+      ws_send('RESUME_TORRENT', { id: torrent.id });
     } else {
-      ws_send("PAUSE_TORRENT", { id: torrent.id });
+      ws_send('PAUSE_TORRENT', { id: torrent.id });
     }
   }
 
@@ -164,12 +179,10 @@ class Torrent extends Component {
       server,
       socket,
     } = this.props;
-    const status = s => s[0].toUpperCase() + s.slice(1);
+    const status = (s) => s[0].toUpperCase() + s.slice(1);
 
     if (!torrent || !files) {
-      return (
-        <p>Loading...</p>
-      );
+      return <p>Loading...</p>;
     }
 
     return (
@@ -178,20 +191,24 @@ class Torrent extends Component {
         <div className="torrent-controls">
           <a
             href="#"
-            style={{margin: "auto 0.5rem"}}
-            title={torrent.status === "paused" ? "Resume" : "Pause"}
-            onClick={e => {
+            style={{ margin: 'auto 0.5rem' }}
+            title={torrent.status === 'paused' ? 'Resume' : 'Pause'}
+            onClick={(e) => {
               e.preventDefault();
               this.toggleTorrentState(torrent);
             }}
           >
-            <FontAwesome name={torrent.status === "paused" ? "play" : "pause"} />
+            <FontAwesome
+              name={torrent.status === 'paused' ? 'play' : 'pause'}
+            />
           </a>
           <div className="status">{status(torrent.status)}</div>
           <TorrentProgress torrent={torrent} />
           <ButtonDropdown
             isOpen={this.state.removeDropdown}
-            toggle={() => this.setState({ removeDropdown: !this.state.removeDropdown })}
+            toggle={() =>
+              this.setState({ removeDropdown: !this.state.removeDropdown })
+            }
           >
             <DropdownToggle color="danger" caret>
               Remove
@@ -200,15 +217,22 @@ class Torrent extends Component {
               <DropdownItem
                 onClick={() => {
                   dispatch(selectTorrent([torrent.id], SUBTRACT));
-                  ws_send("REMOVE_RESOURCE", { id: torrent.id });
+                  ws_send('REMOVE_RESOURCE', { id: torrent.id });
                 }}
-              >Remove</DropdownItem>
+              >
+                Remove
+              </DropdownItem>
               <DropdownItem
                 onClick={() => {
                   dispatch(selectTorrent([torrent.id], SUBTRACT));
-                  ws_send("REMOVE_RESOURCE", { id: torrent.id, artifacts: true });
+                  ws_send('REMOVE_RESOURCE', {
+                    id: torrent.id,
+                    artifacts: true,
+                  });
                 }}
-              >Remove and delete files</DropdownItem>
+              >
+                Remove and delete files
+              </DropdownItem>
             </DropdownMenu>
           </ButtonDropdown>
         </div>
@@ -220,118 +244,148 @@ class Torrent extends Component {
           />
           <CollapseToggle
             text="Files"
-            onToggle={() => this.setState({ filesShown: !this.state.filesShown })}
+            onToggle={() =>
+              this.setState({ filesShown: !this.state.filesShown })
+            }
             open={this.state.filesShown}
           />
           <CollapseToggle
             text="Trackers"
-            onToggle={() => this.setState({ trackersShown: !this.state.trackersShown })}
+            onToggle={() =>
+              this.setState({ trackersShown: !this.state.trackersShown })
+            }
             open={this.state.trackersShown}
           />
           <CollapseToggle
             text="Peers"
-            onToggle={() => this.setState({ peersShown: !this.state.peersShown })}
+            onToggle={() =>
+              this.setState({ peersShown: !this.state.peersShown })
+            }
             open={this.state.peersShown}
           />
         </ButtonGroup>
         <Collapse isOpen={this.state.infoShown}>
-          <Card style={{marginBottom: "1rem"}}>
+          <Card style={{ marginBottom: '1rem' }}>
             <CardBody>
               <button
                 className="btn btn-sm btn-outline-primary pull-right"
                 onClick={() => {
-                  ws_send("VALIDATE_RESOURCES", { ids: [torrent.id] })
+                  ws_send('VALIDATE_RESOURCES', { ids: [torrent.id] });
                 }}
-              >Initiate hash check</button>
+              >
+                Initiate hash check
+              </button>
               <dl>
                 <dt>Type</dt>
-                <dd>{torrent.private ? "Private" : "Public"}</dd>
+                <dd>{torrent.private ? 'Private' : 'Public'}</dd>
                 <dt>Downloading to</dt>
                 <dd>{torrent.path}</dd>
                 <dt>Created</dt>
-                <dd><DateDisplay when={moment(torrent.created)} /></dd>
+                <dd>
+                  <DateDisplay when={moment(torrent.created)} />
+                </dd>
                 <dt>Comment</dt>
-                <dd>{torrent.comment || "None"}</dd>
+                <dd>{torrent.comment || 'None'}</dd>
                 <dt>Creator</dt>
-                <dd>{torrent.creator || "None"}</dd>
+                <dd>{torrent.creator || 'None'}</dd>
               </dl>
               <TorrentOptions
                 id={torrent.id}
                 priority={torrent.priority}
                 strategy={torrent.strategy}
-                priorityChanged={priority =>
-                  dispatch(updateResource({ id: torrent.id, priority }))}
-                strategyChanged={strategy =>
-                  dispatch(updateResource({ id: torrent.id, strategy }))}
+                priorityChanged={(priority) =>
+                  dispatch(updateResource({ id: torrent.id, priority }))
+                }
+                strategyChanged={(strategy) =>
+                  dispatch(updateResource({ id: torrent.id, strategy }))
+                }
                 downloadThrottle={torrent.throttle_down}
-                downloadThrottleChanged={throttle_down =>
-                  dispatch(updateResource({ id: torrent.id, throttle_down }))}
+                downloadThrottleChanged={(throttle_down) =>
+                  dispatch(updateResource({ id: torrent.id, throttle_down }))
+                }
                 uploadThrottle={torrent.throttle_up}
-                uploadThrottleChanged={throttle_up =>
-                  dispatch(updateResource({ id: torrent.id, throttle_up }))}
+                uploadThrottleChanged={(throttle_up) =>
+                  dispatch(updateResource({ id: torrent.id, throttle_up }))
+                }
               />
             </CardBody>
           </Card>
         </Collapse>
         <Collapse isOpen={this.state.filesShown}>
-          <Card style={{marginBottom: "1rem"}}>
-            <CardBody style={{padding: "0"}}>
-              <div className="files flex-table" style={{marginBottom: "0"}}>
+          <Card style={{ marginBottom: '1rem' }}>
+            <CardBody style={{ padding: '0' }}>
+              <div className="files flex-table" style={{ marginBottom: '0' }}>
                 {this.state.filesShown
-                  ? files.slice()
-                    .sort((a, b) => a.path.localeCompare(b.path, undefined, {numeric: true}))
-                    .map(file => <File
-                      dispatch={dispatch}
-                      file={file}
-                      server={server}
-                      socket={socket}
-                    />)
+                  ? files
+                      .slice()
+                      .sort((a, b) =>
+                        a.path.localeCompare(b.path, undefined, {
+                          numeric: true,
+                        })
+                      )
+                      .map((file) => (
+                        <File
+                          dispatch={dispatch}
+                          file={file}
+                          server={server}
+                          socket={socket}
+                        />
+                      ))
                   : null}
               </div>
             </CardBody>
           </Card>
         </Collapse>
         <Collapse isOpen={this.state.trackersShown}>
-          <Card style={{marginBottom: "1rem"}}>
+          <Card style={{ marginBottom: '1rem' }}>
             <CardBody>
-              {trackers.map(tracker =>
+              {trackers.map((tracker) => (
                 <div>
-                  <h5>{(() => {
-                      const a = document.createElement("a");
+                  <h5>
+                    {(() => {
+                      const a = document.createElement('a');
                       a.href = tracker.url;
                       return a.hostname;
                     })()}
                     <button
                       className="btn btn-sm btn-outline-primary pull-right"
                       onClick={() => {
-                        ws_send("UPDATE_TRACKER", { id: tracker.id })
+                        ws_send('UPDATE_TRACKER', { id: tracker.id });
                       }}
-                    >Report</button>
+                    >
+                      Report
+                    </button>
                   </h5>
                   <dl>
                     <dt>URL</dt>
                     <dd>{tracker.url}</dd>
                     <dt>Last report</dt>
-                    <dd><DateDisplay when={moment(tracker.last_report)} /></dd>
+                    <dd>
+                      <DateDisplay when={moment(tracker.last_report)} />
+                    </dd>
                     {tracker.error && <dt>Error</dt>}
-                    {tracker.error &&
-                      <dd className="text-danger">{tracker.error}</dd>}
+                    {tracker.error && (
+                      <dd className="text-danger">{tracker.error}</dd>
+                    )}
                   </dl>
                 </div>
-              )}
+              ))}
             </CardBody>
           </Card>
         </Collapse>
         <Collapse isOpen={this.state.peersShown}>
-          <Card style={{marginBottom: "1rem"}}>
-            <CardBody style={{padding: "0"}}>
-              <div className="peers flex-table" style={{marginBottom: "0"}}>
-                {this.state.peersShown ? peers.map(peer => <Peer peer={peer} />) : null}
+          <Card style={{ marginBottom: '1rem' }}>
+            <CardBody style={{ padding: '0' }}>
+              <div className="peers flex-table" style={{ marginBottom: '0' }}>
+                {this.state.peersShown
+                  ? peers.map((peer) => <Peer peer={peer} />)
+                  : null}
               </div>
-              {peers.length === 0 &&
-                <div style={{padding: "0.5rem 0 0 0.5rem"}}>
+              {peers.length === 0 && (
+                <div style={{ padding: '0.5rem 0 0 0.5rem' }}>
                   <p>No connected peers.</p>
-                </div>}
+                </div>
+              )}
             </CardBody>
           </Card>
         </Collapse>
@@ -344,14 +398,14 @@ class TorrentDetails extends Component {
   constructor() {
     super();
     this.state = {
-      removeDropdown: false
+      removeDropdown: false,
     };
   }
 
   componentDidMount() {
     const { dispatch } = this.props;
     const { ids } = this.props.match.params;
-    const _ids = ids.split(",");
+    const _ids = ids.split(',');
     dispatch(selectTorrent(_ids, UNION));
   }
 
@@ -370,22 +424,28 @@ class TorrentDetails extends Component {
             <a
               href="#"
               title="Resume all"
-              onClick={e => {
+              onClick={(e) => {
                 e.preventDefault();
-                selection.forEach(id => ws_send("RESUME_TORRENT", { id }));
+                selection.forEach((id) => ws_send('RESUME_TORRENT', { id }));
               }}
-            ><FontAwesome name="play" /></a>
+            >
+              <FontAwesome name="play" />
+            </a>
             <a
               href="#"
               title="Pause all"
-              onClick={e => {
+              onClick={(e) => {
                 e.preventDefault();
-                selection.forEach(id => ws_send("PAUSE_TORRENT", { id }));
+                selection.forEach((id) => ws_send('PAUSE_TORRENT', { id }));
               }}
-            ><FontAwesome name="pause" /></a>
+            >
+              <FontAwesome name="pause" />
+            </a>
             <ButtonDropdown
               isOpen={this.state.removeDropdown}
-              toggle={() => this.setState({ removeDropdown: !this.state.removeDropdown })}
+              toggle={() =>
+                this.setState({ removeDropdown: !this.state.removeDropdown })
+              }
             >
               <DropdownToggle color="danger" caret>
                 Remove all
@@ -394,18 +454,26 @@ class TorrentDetails extends Component {
                 <DropdownItem
                   onClick={() => {
                     dispatch(selectTorrent(selection, SUBTRACT));
-                    selection.forEach(id => ws_send("REMOVE_RESOURCE", { id }));
+                    selection.forEach((id) =>
+                      ws_send('REMOVE_RESOURCE', { id })
+                    );
                   }}
-                >Remove selected torrents</DropdownItem>
+                >
+                  Remove selected torrents
+                </DropdownItem>
                 <DropdownItem
                   onClick={() => {
                     dispatch(selectTorrent(selection, SUBTRACT));
-                    selection.forEach(id => ws_send("REMOVE_RESOURCE", {
-                      id,
-                      artifacts: true
-                    }));
+                    selection.forEach((id) =>
+                      ws_send('REMOVE_RESOURCE', {
+                        id,
+                        artifacts: true,
+                      })
+                    );
                   }}
-                >Remove selected torrents and delete files</DropdownItem>
+                >
+                  Remove selected torrents and delete files
+                </DropdownItem>
               </DropdownMenu>
             </ButtonDropdown>
           </div>
@@ -423,11 +491,11 @@ class TorrentDetails extends Component {
       selection,
       server,
       socket,
-      dispatch
+      dispatch,
     } = this.props;
-    const index_by_tid = (res)  => {
+    const index_by_tid = (res) => {
       let _indexed = {};
-      Object.values(res).map(r => {
+      Object.values(res).map((r) => {
         if (!(r.torrent_id in _indexed)) {
           _indexed[r.torrent_id] = [];
         }
@@ -443,29 +511,29 @@ class TorrentDetails extends Component {
     return (
       <div>
         {selection.length > 1 ? this.renderHeader.bind(this)() : null}
-        {selection.slice(0, 3).map(id => <Torrent
-          dispatch={dispatch}
-          torrent={torrents[id]}
-          files={_files[id] || []}
-          trackers={_trackers[id] || []}
-          peers={_peers[id] || []}
-          server={server}
-          socket={socket}
-          key={id}
-        />)}
-        {selection.length > 3 ?
+        {selection.slice(0, 3).map((id) => (
+          <Torrent
+            dispatch={dispatch}
+            torrent={torrents[id]}
+            files={_files[id] || []}
+            trackers={_trackers[id] || []}
+            peers={_peers[id] || []}
+            server={server}
+            socket={socket}
+            key={id}
+          />
+        ))}
+        {selection.length > 3 ? (
           <p className="text-center text-muted">
-            <strong>
-              ...{selection.length - 3} more hidden...
-            </strong>
+            <strong>...{selection.length - 3} more hidden...</strong>
           </p>
-        : null}
+        ) : null}
       </div>
     );
   }
 }
 
-export default connect(state => ({
+export default connect((state) => ({
   router: state.router,
   torrents: state.torrents,
   files: state.files,

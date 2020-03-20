@@ -1,17 +1,13 @@
 import React, { Component } from 'react';
-import {
-  FormGroup,
-  Label,
-  Input
-} from 'reactstrap';
-import { convertFromBitrate, convertToBitrate } from '../bitrate';
+import { FormGroup, Label, Input } from 'reactstrap';
+import { convertFromBitrate, convertToBitrate } from '../Bitrate';
 
 export default class Throttle extends Component {
   constructor() {
     super();
     this.setLimit = this.setLimit.bind(this);
     this.setUnit = this.setUnit.bind(this);
-    this.state = { custom: 1024 * 1024, unit: "MiB/s" };
+    this.state = { custom: 1024 * 1024, unit: 'MiB/s' };
   }
 
   setLimit(limit) {
@@ -24,8 +20,8 @@ export default class Throttle extends Component {
     if (isNaN(limit)) {
       limit = 0;
     }
-    const converted = limit <= 0 || limit === null ?
-      limit : convertToBitrate(limit, unit);
+    const converted =
+      limit <= 0 || limit === null ? limit : convertToBitrate(limit, unit);
     onChange && onChange(converted);
     this.setState({ unit, custom });
   }
@@ -43,28 +39,31 @@ export default class Throttle extends Component {
       <div>
         <FormGroup tag="fieldset">
           <legend>{legend}</legend>
-          {typeof global === "undefined" || global &&
-            <FormGroup check className="form-check-inline">
-              <Label for={`${prop}-global`} check>
-                <Input
-                  type="radio"
-                  name={prop}
-                  id={`${prop}-global`}
-                  onChange={e => this.setLimit(null)}
-                  checked={limit === null}
-                /> Global
-              </Label>
-            </FormGroup>
-          }
+          {typeof global === 'undefined' ||
+            (global && (
+              <FormGroup check className="form-check-inline">
+                <Label for={`${prop}-global`} check>
+                  <Input
+                    type="radio"
+                    name={prop}
+                    id={`${prop}-global`}
+                    onChange={(e) => this.setLimit(null)}
+                    checked={limit === null}
+                  />{' '}
+                  Global
+                </Label>
+              </FormGroup>
+            ))}
           <FormGroup check className="form-check-inline">
             <Label for={`${prop}-unlimited`} check>
               <Input
                 type="radio"
                 name={prop}
                 id={`${prop}-unlimited`}
-                onChange={e => this.setLimit(-1)}
+                onChange={(e) => this.setLimit(-1)}
                 checked={limit === -1}
-              /> Unlimited
+              />{' '}
+              Unlimited
             </Label>
           </FormGroup>
           <FormGroup check className="form-check-inline">
@@ -73,19 +72,22 @@ export default class Throttle extends Component {
                 type="radio"
                 name={prop}
                 id={`${prop}-custom`}
-                onChange={e => this.setLimit(convertFromBitrate(custom, unit))}
+                onChange={(e) =>
+                  this.setLimit(convertFromBitrate(custom, unit))
+                }
                 checked={limit !== -1 && limit !== null}
-              /> Custom
+              />{' '}
+              Custom
             </Label>
           </FormGroup>
         </FormGroup>
-        {limit !== -1 && limit !== null &&
+        {limit !== -1 && limit !== null && (
           <div className="row">
             <FormGroup className="col-md-6">
               <Input
                 type="number"
                 value={convertFromBitrate(limit, unit)}
-                onChange={e => this.setLimit(parseFloat(e.target.value))}
+                onChange={(e) => this.setLimit(parseFloat(e.target.value))}
               />
             </FormGroup>
             <FormGroup className="col-md-6">
@@ -93,7 +95,7 @@ export default class Throttle extends Component {
                 type="select"
                 id="unit"
                 value={unit}
-                onChange={e => this.setUnit(e.target.value)}
+                onChange={(e) => this.setUnit(e.target.value)}
               >
                 <option value="KiB/s">KiB/s</option>
                 <option value="MiB/s">MiB/s</option>
@@ -101,7 +103,7 @@ export default class Throttle extends Component {
               </Input>
             </FormGroup>
           </div>
-        }
+        )}
       </div>
     );
   }
