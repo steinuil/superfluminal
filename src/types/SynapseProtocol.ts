@@ -150,15 +150,21 @@ export interface SynapseMessage<T extends string> {
 
 // Server -> client
 
-export interface UpdateResources extends SynapseMessage<'UPDATE_RESOURCES'> {
+export interface UpdateResources {
+  type: 'UPDATE_RESOURCES';
+  serial: SynapseSerial | null;
   resources: SynapseResource[];
 }
 
-export interface ResourcesExtant extends SynapseMessage<'RESOURCES_EXTANT'> {
+export interface ResourcesExtant {
+  type: 'RESOURCES_EXTANT';
+  serial: SynapseSerial | null;
   ids: SynapseId[];
 }
 
-export interface ResourcesRemoved extends SynapseMessage<'RESOURCES_REMOVED'> {
+export interface ResourcesRemoved {
+  type: 'RESOURCES_REMOVED';
+  serial: SynapseSerial | null;
   ids: SynapseId[];
 }
 
@@ -180,19 +186,18 @@ export interface ResourcePending extends SynapseMessage<'RESOURCE_PENDING'> {
   id: SynapseId;
 }
 
-export type SynapseErrorType =
-  | 'UNKNOWN_RESOURCE'
-  | 'INVALID_RESOURCE'
-  | 'INVALID_MESSAGE'
-  | 'INVALID_SCHEMA'
-  | 'INVALID_REQUEST'
-  | 'TRANSFER_FAILED'
-  | 'PERMISSION_DENIED'
-  | 'SERVER_ERROR';
-
-export interface SynapseError extends SynapseMessage<SynapseErrorType> {
+export interface SynapseError<T extends string> extends SynapseMessage<T> {
   reason: string;
 }
+
+export type UnknownResourceError = SynapseError<'UNKNOWN_RESOURCE'>;
+export type InvalidResourceError = SynapseError<'INVALID_RESOURCE'>;
+export type InvalidMessageError = SynapseError<'INVALID_MESSAGE'>;
+export type InvalidSchemaError = SynapseError<'INVALID_SCHEMA'>;
+export type InvalidRequestError = SynapseError<'INVALID_REQUEST'>;
+export type TransferFailedError = SynapseError<'TRANSFER_FAILED'>;
+export type PermissionDeniedError = SynapseError<'PERMISSION_DENIED'>;
+export type ServerError = SynapseError<'SERVER_ERROR'>;
 
 export type SynapseServerMessage =
   | UpdateResources
@@ -201,7 +206,14 @@ export type SynapseServerMessage =
   | RpcVersion
   | TransferOffer
   | ResourcePending
-  | SynapseError;
+  | UnknownResourceError
+  | InvalidResourceError
+  | InvalidMessageError
+  | InvalidSchemaError
+  | InvalidRequestError
+  | TransferFailedError
+  | PermissionDeniedError
+  | ServerError;
 
 // Client -> server
 

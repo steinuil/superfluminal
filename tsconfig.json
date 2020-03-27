@@ -10,7 +10,7 @@
     "moduleResolution": "node",
     "allowJs": true,
     "esModuleInterop": true,
-    "types": []
+    "types": ["jest"]
   },
   "include": ["src/**/*"]
 }

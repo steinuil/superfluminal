@@ -18,7 +18,7 @@ import sha1 from 'js-sha1';
 import TorrentOptions from './torrent_options';
 import { TorrentProgress } from './TorrentProgress';
 import ws_send from '../socket';
-import store from '../store';
+import store from '../storeOld';
 import DateDisplay from './date';
 import selectTorrent, {
   EXCLUSIVE,

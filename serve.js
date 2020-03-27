@@ -17,7 +17,7 @@ app.use(require('webpack-dev-middleware')(compiler, {
 app.use(require('webpack-hot-middleware')(compiler));
 
 app.get('*', function(req, res) {
-  var _path = path.join(__dirname, req.path);
+  var _path = path.join(__dirname, req.path === '/' ? '/index.html' : req.path);
   fs.access(_path, fs.constants.R_OK, err => {
     if (!err) {
       res.sendFile(_path);

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FormGroup, Input, Label, Row, Col } from 'reactstrap';
 import { Bitrate, BitrateUnit, bitrateToNumber } from '../Bitrate';
-import { mapChangeEv } from '../MapChangeEv';
+import { mapChangeEv } from '../EventHelpers';
 
 const initialBitrate: Bitrate = {
   value: 0,

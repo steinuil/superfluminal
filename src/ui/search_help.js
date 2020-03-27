@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import query from 'query-string';
-import { search_criteria, search_qs, update_filter } from '../search';
+import { search_criteria, search_qs, update_filter } from '../searchOld';
 
 function SearchHelp(props) {
   const { dispatch, router } = props;

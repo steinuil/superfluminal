@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FC, SetStateAction, useState } from 'react';
 import { FormGroup, Input, Card, Label } from 'reactstrap';
-import { mapChangeEv } from '../MapChangeEv';
+import { mapChangeEv } from '../EventHelpers';
 import { ThrottleBitrate, Throttle } from './ThrottleBitrate';
 import { useId } from '../hooks/UseId';
 
