@@ -1,4 +1,4 @@
-import { dispatch } from './storeOld';
+import { store } from './Store';
 import { subscribe, unsubscribe } from './actions/subscribe';
 
 let ws;
@@ -31,13 +31,13 @@ export default function ws_send(type, body, callback = null, __serial = null) {
 }
 
 function _resources_removed(msg) {
-  dispatch(unsubscribe(...msg.ids));
-  dispatch(msg);
+  store.dispatch(unsubscribe(...msg.ids));
+  store.dispatch(msg);
 }
 
 const handlers = {
-  RESOURCES_EXTANT: (msg) => dispatch(subscribe(...msg.ids)),
-  UPDATE_RESOURCES: (msg) => dispatch(msg),
+  RESOURCES_EXTANT: (msg) => store.dispatch(subscribe(...msg.ids)),
+  UPDATE_RESOURCES: (msg) => store.dispatch(msg),
   RESOURCES_REMOVED: (msg) => _resources_removed(msg),
 };
 

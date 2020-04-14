@@ -203,7 +203,10 @@ class Torrent extends Component {
             />
           </a>
           <div className="status">{status(torrent.status)}</div>
-          <TorrentProgress torrent={torrent} />
+          <TorrentProgress
+            progress={torrent.progress}
+            status={torrent.status}
+          />
           <ButtonDropdown
             isOpen={this.state.removeDropdown}
             toggle={() =>
@@ -325,6 +328,7 @@ class Torrent extends Component {
                       )
                       .map((file) => (
                         <File
+                          key={file.id}
                           dispatch={dispatch}
                           file={file}
                           server={server}
@@ -340,7 +344,7 @@ class Torrent extends Component {
           <Card style={{ marginBottom: '1rem' }}>
             <CardBody>
               {trackers.map((tracker) => (
-                <div>
+                <div key={tracker.id}>
                   <h5>
                     {(() => {
                       const a = document.createElement('a');
@@ -378,7 +382,7 @@ class Torrent extends Component {
             <CardBody style={{ padding: '0' }}>
               <div className="peers flex-table" style={{ marginBottom: '0' }}>
                 {this.state.peersShown
-                  ? peers.map((peer) => <Peer peer={peer} />)
+                  ? peers.map((peer) => <Peer key={peer.id} peer={peer} />)
                   : null}
               </div>
               {peers.length === 0 && (

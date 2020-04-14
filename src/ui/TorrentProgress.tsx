@@ -1,20 +1,6 @@
 import * as React from 'react';
 import { Progress } from 'reactstrap';
-
-type TorrentStatus =
-  | 'leeching'
-  | 'seeding'
-  | 'hashing'
-  | 'magnet'
-  | 'idle'
-  | 'pending'
-  | 'paused'
-  | 'error';
-
-interface Torrent {
-  status: TorrentStatus;
-  progress: number;
-}
+import { TorrentStatus } from '../types/SynapseProtocol';
 
 const statusToColor: { [S in TorrentStatus]: string } = {
   leeching: 'success',
@@ -27,30 +13,25 @@ const statusToColor: { [S in TorrentStatus]: string } = {
   error: 'error',
 };
 
-const label = (torrent: Torrent): string => {
-  if (torrent.status === 'leeching') {
-    return `${(torrent.progress * 100).toFixed(2)}%`;
+const label = (status: TorrentStatus, progress: number): string => {
+  if (status === 'leeching') {
+    return `${(progress * 100).toFixed(2)}%`;
   }
 
-  if (
-    (torrent.status === 'paused' || torrent.status === 'idle') &&
-    torrent.progress < 1
-  ) {
-    return `paused (${(torrent.progress * 100).toFixed(2)}%)`;
+  if ((status === 'paused' || status === 'idle') && progress < 1) {
+    return `paused (${(progress * 100).toFixed(2)}%)`;
   }
 
-  return torrent.status;
+  return status;
 };
 
 interface Props {
-  torrent: Torrent;
+  progress: number;
+  status: TorrentStatus;
 }
 
-export const TorrentProgress: React.FC<Props> = ({ torrent }) => (
-  <Progress
-    value={torrent.progress * 100}
-    color={statusToColor[torrent.status]}
-  >
-    {label(torrent)}
+export const TorrentProgress: React.FC<Props> = ({ progress, status }) => (
+  <Progress value={progress * 100} color={statusToColor[status]}>
+    {label(status, progress)}
   </Progress>
 );

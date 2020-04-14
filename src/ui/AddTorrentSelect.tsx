@@ -1,14 +1,6 @@
 import * as React from 'react';
 import { FC, useState, useMemo, useRef } from 'react';
-import {
-  FormGroup,
-  Input,
-  Button,
-  Card,
-  CardText,
-  CardTitle,
-  Form,
-} from 'reactstrap';
+import { FormGroup, Input, Button, Card, CardText, Form } from 'reactstrap';
 
 interface SelectTorrentFileProps {
   onSubmit: (file: File) => void;

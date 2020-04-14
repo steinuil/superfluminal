@@ -4,16 +4,17 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 import query from 'query-string';
 
-import store, { create, history } from './storeOld';
+// import store, { create, history } from './storeOld';
+import { history, store } from './Store';
 // import '../scss/main.scss';
-import 'bootstrap/scss/bootstrap.scss';
+// import 'bootstrap/scss/bootstrap.scss';
 import { ws_init } from './socket';
 import { filter_subscribe } from './actions/filter_subscribe';
 import { socket_uri, socket_update, SOCKET_STATE } from './actions/socket';
 import { search_criteria } from './searchOld';
 
-import Main from './ui/main';
 import Connection from './ui/connection';
+import { Layout } from './ui/Layout';
 
 Set.prototype.difference = function(set) {
   var diff = new Set(this);
@@ -42,15 +43,14 @@ export function initialize(uri) {
   );
 }
 
-const render = (main) =>
-  ReactDOM.render(
-    <Provider store={store}>
-      <ConnectedRouter history={history}>{main}</ConnectedRouter>
-    </Provider>,
-    document.getElementById('root')
-  );
-
-render(<Main />);
+ReactDOM.render(
+  <Provider store={store}>
+    <ConnectedRouter history={history}>
+      <Layout />
+    </ConnectedRouter>
+  </Provider>,
+  document.getElementById('root')
+);
 
 // if (module.hot) {
 //   module.hot.accept('./ui/main.js', () => {

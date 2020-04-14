@@ -1,7 +1,7 @@
 import { ChangeEvent, Dispatch, BaseSyntheticEvent } from 'react';
 
 export const mapChangeEv = <T extends string>(f: Dispatch<T>) => (
-  ev: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ev: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
 ) => f(ev.currentTarget.value as T);
 
 export const preventDefault = <T extends BaseSyntheticEvent>(

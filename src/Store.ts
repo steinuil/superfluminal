@@ -1,73 +1,35 @@
-import {
-  createStore,
-  applyMiddleware,
-  compose,
-  Action,
-  Store,
-  combineReducers,
-} from 'redux';
-import {
-  routerMiddleware,
-  RouterState,
-  connectRouter,
-} from 'connected-react-router';
-import { createBrowserHistory, History } from 'history';
 import thunk from 'redux-thunk';
-import {
-  SynapseResource,
-  ServerResource,
-  TorrentResource,
-  FileResource,
-  PeerResource,
-  TrackerResource,
-  SynapseSerial,
-  SynapseId,
-  Criterion,
-} from './types/SynapseProtocol';
+import { createBrowserHistory, History } from 'history';
+import { createStore, applyMiddleware, combineReducers, Reducer } from 'redux';
+import { routerMiddleware, connectRouter } from 'connected-react-router';
 
-interface ResourceMap<R extends SynapseResource> {
-  [id: string]: R;
-}
+import socket from './reducers/socket';
+import selection from './reducers/selection';
+import subscribe from './reducers/subscribe';
+import filter_subscribe from './reducers/filter_subscribe';
+import server from './reducers/server';
+import torrents from './reducers/torrents';
+import files from './reducers/files';
+import peers from './reducers/peers';
+import trackers from './reducers/trackers';
+import { State } from './types/Store';
 
-export interface State {
-  router: RouterState;
-  socket: {
-    uri: string;
-    password: string;
-    state: 'SOCKET_CONNECTED' | 'SOCKET_CONNECTING' | 'SOCKET_DISCONNECTED';
-    reason: string | null;
-  };
-  selection: SynapseId[];
-  subscribe: Array<{
-    serial: SynapseSerial;
-    id: SynapseId;
-  }>;
-  filter_subscribe: Array<{
-    serial: SynapseSerial;
-    kind: SynapseResource['type'];
-    criteria: Criterion[];
-  }>;
-  resources: {
-    server: ServerResource;
-    torrents: ResourceMap<TorrentResource>;
-    files: ResourceMap<FileResource>;
-    peers: ResourceMap<PeerResource>;
-    trackers: ResourceMap<TrackerResource>;
-  };
-}
-
-const history = createBrowserHistory();
-
-const x = (() => ({})) as any;
+export const history = createBrowserHistory();
 
 const reducer = (history: History) =>
   combineReducers<State>({
     router: connectRouter(history),
-    socket: x,
-    selection: x,
-    subscribe: x,
-    filter_subscribe: x,
-    resources: x,
+    socket: socket as Reducer<State['socket']>,
+    selection: selection,
+    subscribe: subscribe,
+    filter_subscribe: filter_subscribe,
+    // resources: combineReducers<State['resources']>({
+    server: server,
+    torrents: torrents,
+    files: files,
+    peers: peers,
+    trackers: trackers,
+    // }),
   });
 
 export const store = createStore(

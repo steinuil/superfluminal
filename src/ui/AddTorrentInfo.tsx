@@ -46,7 +46,7 @@ const TorrentFileInfo: React.FC<TorrentFileInfoProps> = ({ file }) => {
       <dt>Size</dt>
       <dd>{formatAmount(info.length)}</dd>
       <dt>Type</dt>
-      <dd>{info.private ? 'Public' : 'Private'}</dd>
+      <dd>{info.private ? 'Private' : 'Public'}</dd>
       <dt>Comment</dt>
       <dd>{info.comment || 'None'}</dd>
       <dt>Creator</dt>

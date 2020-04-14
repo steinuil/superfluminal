@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { TorrentOptions, AddTorrentForm } from './AddTorrentForm';
 import { SelectedTorrent } from './AddTorrentSelect';
 import { uploadTorrentFile, uploadMagnet } from '../UploadTorrent';
