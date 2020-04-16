@@ -2,9 +2,9 @@ import React from 'react';
 import { ConnectedTorrentTable } from './ConnectedTorrentTable';
 import { ConnectedStatusBar } from './ConnectedStatusBar';
 import { createUseStyles } from 'react-jss';
-import ConnectionOverlay from './connection';
 import { AddTorrent } from './AddTorrent';
 import { TopBar } from './TopBar';
+import { ConnectionOverlay } from './ConnectionOverlay';
 
 const useStyles = createUseStyles({
   '@global': {
@@ -65,6 +65,7 @@ export const Layout: React.FC<Props> = () => {
 
   return (
     <div className={styles.root}>
+      <ConnectionOverlay />
       <div className={styles.main}>
         <div className={styles.header}>
           <TopBar />
@@ -73,7 +74,6 @@ export const Layout: React.FC<Props> = () => {
           <ConnectedTorrentTable />
         </div>
         <div className={styles.footer}>
-          <ConnectionOverlay />
           <ConnectedStatusBar />
         </div>
       </div>

@@ -1,10 +1,13 @@
 import React, { useCallback } from 'react';
 import { SelectedTorrent } from './AddTorrentSelect';
-import { Card, CardTitle, Button, Spinner } from 'reactstrap';
 import { readMagnet } from '../ReadMagnet';
 import { usePromise } from '../hooks/UsePromise';
 import { readTorrentFile } from '../ReadTorrentFile';
-import { formatAmount } from '../Bitrate';
+import { Stack } from '../components/Stack';
+import { Button } from '../components/Button';
+import { Definition } from '../components/Definition';
+import { fmtSizeBin } from '../Units';
+import { TextSingleLine } from '../components/TextSingleLine';
 
 interface MagnetInfoProps {
   magnet: string;
@@ -14,20 +17,12 @@ const MagnetInfo: React.FC<MagnetInfoProps> = ({ magnet }) => {
   const info = readMagnet(magnet);
 
   return (
-    <dl>
-      {info.name && (
-        <>
-          <dt>Name</dt>
-          <dd>{info.name}</dd>
-        </>
-      )}
+    <Stack spacing="8px">
+      {info.name && <Definition label="Name">{info.name}</Definition>}
       {info.length && (
-        <>
-          <dt>Size</dt>
-          <dd>{info.length}</dd>
-        </>
+        <Definition label="Size">{fmtSizeBin(info.length)}</Definition>
       )}
-    </dl>
+    </Stack>
   );
 };
 
@@ -40,20 +35,19 @@ const TorrentFileInfo: React.FC<TorrentFileInfoProps> = ({ file }) => {
   const info = usePromise(getTorrentInfo);
 
   return info ? (
-    <dl>
-      <dt>Name</dt>
-      <dd>{info.name}</dd>
-      <dt>Size</dt>
-      <dd>{formatAmount(info.length)}</dd>
-      <dt>Type</dt>
-      <dd>{info.private ? 'Private' : 'Public'}</dd>
-      <dt>Comment</dt>
-      <dd>{info.comment || 'None'}</dd>
-      <dt>Creator</dt>
-      <dd>{info.createdBy || 'None'}</dd>
-    </dl>
+    <Stack spacing="8px">
+      <Definition label="Name">{info.name}</Definition>
+      <Definition label="Size">{fmtSizeBin(info.length)}</Definition>
+      <Definition label="Type">
+        {info.private ? 'Private' : 'Public'}
+      </Definition>
+      {info.comment && <Definition label="Comment">{info.comment}</Definition>}
+      {info.createdBy && (
+        <Definition label="Creator">{info.createdBy}</Definition>
+      )}
+    </Stack>
   ) : (
-    <Spinner />
+    <TextSingleLine>Loading...</TextSingleLine>
   );
 };
 
@@ -63,17 +57,15 @@ interface Props {
 }
 
 export const AddTorrentInfo: React.FC<Props> = ({ torrent, onCancel }) => (
-  <Card body>
-    <CardTitle>
-      {torrent.type === 'FILE' ? torrent.file.name : torrent.magnet}
-    </CardTitle>
+  <Stack spacing="16px">
+    <div>{torrent.type === 'FILE' ? torrent.file.name : torrent.magnet}</div>
     {torrent.type === 'FILE' ? (
       <TorrentFileInfo file={torrent.file} />
     ) : (
       <MagnetInfo magnet={torrent.magnet} />
     )}
-    <Button block outline onClick={onCancel}>
+    <Button type="button" onClick={onCancel}>
       Select a different torrent
     </Button>
-  </Card>
+  </Stack>
 );

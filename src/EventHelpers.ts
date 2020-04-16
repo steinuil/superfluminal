@@ -1,4 +1,9 @@
-import { ChangeEvent, Dispatch, BaseSyntheticEvent } from 'react';
+import {
+  ChangeEvent,
+  Dispatch,
+  BaseSyntheticEvent,
+  KeyboardEventHandler,
+} from 'react';
 
 export const mapChangeEv = <T extends string>(f: Dispatch<T>) => (
   ev: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -9,4 +14,15 @@ export const preventDefault = <T extends BaseSyntheticEvent>(
 ) => (ev: T) => {
   ev.preventDefault();
   if (f) f(ev);
+};
+
+export const onKeyboardSelect = <T = Element>(
+  handler: KeyboardEventHandler<T>
+): KeyboardEventHandler<T> => (ev) => {
+  switch (ev.key) {
+    case 'Enter':
+    case ' ':
+      ev.preventDefault();
+      handler(ev);
+  }
 };

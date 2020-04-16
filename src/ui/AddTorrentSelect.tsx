@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { FC, useState, useMemo, useRef } from 'react';
-import { FormGroup, Input, Button, Card, CardText, Form } from 'reactstrap';
+import { Button } from '../components/Button';
+import { Stack } from '../components/Stack';
+import { TextField } from '../components/TextField';
+import { TextSingleLine } from '../components/TextSingleLine';
+import { preventDefault } from '../EventHelpers';
 
 interface SelectTorrentFileProps {
   onSubmit: (file: File) => void;
@@ -18,8 +22,8 @@ const SelectTorrentFile: FC<SelectTorrentFileProps> = ({ onSubmit }) => {
   const onClick = () => fileFormRef.current && fileFormRef.current.click();
 
   return (
-    <FormGroup>
-      <Button type="button" block color="primary" onClick={onClick}>
+    <div>
+      <Button type="button" onClick={onClick}>
         Select .torrent file
       </Button>
       <input
@@ -29,7 +33,7 @@ const SelectTorrentFile: FC<SelectTorrentFileProps> = ({ onSubmit }) => {
         accept=".torrent"
         onChange={handleChangeFile}
       />
-    </FormGroup>
+    </div>
   );
 };
 
@@ -49,25 +53,20 @@ const SelectMagnet: FC<SelectMagnetProps> = ({ onSubmit }) => {
   }, [magnet]);
 
   return (
-    <Form>
-      <FormGroup>
-        <Input
-          type="text"
-          placeholder="Magnet link"
+    <form onSubmit={preventDefault(() => onSubmit(magnet))}>
+      <Stack spacing="8px">
+        <TextField
+          label="Magnet URI"
+          type="url"
           value={magnet}
-          onChange={(ev) => setMagnet(ev.target.value)}
+          onChange={setMagnet}
+          required
         />
-      </FormGroup>
-      <Button
-        type="submit"
-        block
-        color="primary"
-        onClick={() => onSubmit(magnet)}
-        disabled={isAddMagnetDisabled}
-      >
-        Select magnet
-      </Button>
-    </Form>
+        <Button type="submit" disabled={isAddMagnetDisabled}>
+          Select magnet
+        </Button>
+      </Stack>
+    </form>
   );
 };
 
@@ -80,9 +79,9 @@ interface Props {
 }
 
 export const AddTorrentSelect: FC<Props> = ({ onSubmit }) => (
-  <Card body>
+  <Stack spacing="16px">
     <SelectTorrentFile onSubmit={(file) => onSubmit({ type: 'FILE', file })} />
-    <CardText className="text-center">- or -</CardText>
+    <TextSingleLine center>- or -</TextSingleLine>
     <SelectMagnet onSubmit={(magnet) => onSubmit({ type: 'MAGNET', magnet })} />
-  </Card>
+  </Stack>
 );

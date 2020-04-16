@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { FC, SetStateAction, useState } from 'react';
-import { FormGroup, Input, Card, Label } from 'reactstrap';
-import { mapChangeEv } from '../EventHelpers';
+import { FC, SetStateAction } from 'react';
 import { ThrottleBitrate, Throttle } from './ThrottleBitrate';
-import { useId } from '../hooks/UseId';
+import { Stack } from '../components/Stack';
+import { TextField } from '../components/TextField';
+import { CheckboxField } from '../components/CheckboxField';
+import { SelectField } from '../components/SelectField';
 
 interface Props {
   startImmediately: boolean;
@@ -39,85 +40,51 @@ export const TorrentOptions: FC<Props> = ({
   setDownloadThrottle,
   uploadThrottle,
   setUploadThrottle,
-}) => {
-  const pathId = useId('path', []);
-  const priorityId = useId('priority', []);
-  const strategyId = useId('strategy', []);
-
-  return (
-    <Card body className="pb-0">
-      <FormGroup>
-        <Label htmlFor={pathId}>Path</Label>
-        <Input
-          id={pathId}
-          type="text"
-          placeholder="Path"
-          value={path}
-          onChange={mapChangeEv(setPath)}
-          required
-        />
-      </FormGroup>
-      <FormGroup>
-        <Label htmlFor={priorityId}>Priority</Label>
-        <Input
-          id={priorityId}
-          type="select"
-          value={priority.toString()}
-          onChange={mapChangeEv((p) =>
-            setPriority(parseInt(p, 10) as 1 | 2 | 3 | 4 | 5)
-          )}
-        >
-          <option value="1">Lowest</option>
-          <option value="2">Low</option>
-          <option value="3">Normal</option>
-          <option value="4">High</option>
-          <option value="5">Highest</option>
-        </Input>
-      </FormGroup>
-      <FormGroup>
-        <Label htmlFor={strategyId}>Download strategy</Label>
-        <Input
-          id={strategyId}
-          type="select"
-          value={downloadStrategy}
-          onChange={mapChangeEv(setDownloadStrategy)}
-        >
-          <option value="rarest">Rarest</option>
-          <option value="sequential">Sequential</option>
-        </Input>
-      </FormGroup>
-      <FormGroup check className="mb-3">
-        <Label>
-          <Input
-            type="checkbox"
-            checked={startImmediately}
-            onChange={() => setStartImmediately((p) => !p)}
-          />
-          Start immediately
-        </Label>
-      </FormGroup>
-      {hasImport && (
-        <FormGroup check className="mb-3">
-          <Label>
-            <Input
-              type="checkbox"
-              checked={shouldImport}
-              onChange={() => setShouldImport((p) => !p)}
-            />
-            Import (skip hash check)
-          </Label>
-        </FormGroup>
-      )}
-      <ThrottleBitrate
-        title="Download throttle"
-        throttle={downloadThrottle}
-        onChange={setDownloadThrottle}
+}) => (
+  <Stack spacing="16px">
+    <TextField label="Path" type="text" value={path} onChange={setPath} />
+    <SelectField
+      label="Priority"
+      value={priority.toString()}
+      onChange={(p) => setPriority(parseInt(p, 10) as 1 | 2 | 3 | 4 | 5)}
+      options={[
+        { value: '1', name: 'Lowest' },
+        { value: '2', name: 'Low' },
+        { value: '3', name: 'Normal' },
+        { value: '4', name: 'High' },
+        { value: '5', name: 'Highest' },
+      ]}
+    />
+    <SelectField
+      label="Download strategy"
+      value={downloadStrategy}
+      onChange={setDownloadStrategy}
+      options={[
+        { value: 'rarest', name: 'Rarest' },
+        { value: 'sequential', name: 'Sequential' },
+      ]}
+    />
+    <CheckboxField
+      label="Start immediately"
+      checked={startImmediately}
+      onChange={() => setStartImmediately((p) => !p)}
+    />
+    {hasImport && (
+      <CheckboxField
+        label="Import (skip hash check)"
+        checked={shouldImport}
+        onChange={() => setShouldImport((p) => !p)}
       />
-      <ThrottleBitrate
-        title="Upload throttle"
-        throttle={uploadThrottle}
-        onChange={setUploadThrottle}
-      />
-    </Card>
-  );
-};
+    )}
+    <ThrottleBitrate
+      title="Download throttle"
+      throttle={downloadThrottle}
+      onChange={setDownloadThrottle}
+    />
+    <ThrottleBitrate
+      title="Upload throttle"
+      throttle={uploadThrottle}
+      onChange={setUploadThrottle}
+    />
+  </Stack>
+);

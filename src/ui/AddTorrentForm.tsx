@@ -1,10 +1,23 @@
 import * as React from 'react';
 import { FC, useState } from 'react';
-import { Button, CardColumns } from 'reactstrap';
 import { AddTorrentSelect, SelectedTorrent } from './AddTorrentSelect';
 import { TorrentOptions } from './TorrentOptions';
 import { AddTorrentInfo } from './AddTorrentInfo';
 import { Throttle } from './ThrottleBitrate';
+import { Button } from '../components/Button';
+import { Stack } from '../components/Stack';
+import { Divider } from '../components/Divider';
+import { TextSingleLine } from '../components/TextSingleLine';
+import { createUseStyles } from 'react-jss';
+
+const useStyles = createUseStyles({
+  container: {
+    width: '400px',
+    maxHeight: '100%',
+    overflowY: 'auto',
+    overflowX: 'hidden',
+  },
+});
 
 export interface TorrentOptions {
   startImmediately: boolean;
@@ -53,15 +66,18 @@ export const AddTorrentForm: FC<Props> = ({ initialMagnet, onSubmit }) => {
     });
   };
 
+  const styles = useStyles();
+
   return (
-    <div>
-      <h4>Add torrent</h4>
-      <CardColumns style={{ columnCount: 1 }}>
+    <div className={styles.container}>
+      <Stack spacing="16px" padding="16px">
+        <TextSingleLine bold>Add torrent</TextSingleLine>
         {torrent ? (
           <AddTorrentInfo torrent={torrent} onCancel={() => setTorrent(null)} />
         ) : (
           <AddTorrentSelect onSubmit={setTorrent} />
         )}
+        <Divider />
         <TorrentOptions
           startImmediately={startImmediately}
           setStartImmediately={setStartImmediately}
@@ -80,14 +96,13 @@ export const AddTorrentForm: FC<Props> = ({ initialMagnet, onSubmit }) => {
           setUploadThrottle={setUploadThrottle}
         />
         <Button
-          block
-          color="primary"
+          type="submit"
           disabled={torrent === null}
           onClick={handleSubmit}
         >
           Add torrent
         </Button>
-      </CardColumns>
+      </Stack>
     </div>
   );
 };

@@ -1,7 +1,11 @@
-import * as React from 'react';
-import { FormGroup, Input, Label, Row, Col } from 'reactstrap';
+import React from 'react';
 import { Bitrate, BitrateUnit, bitrateToNumber } from '../Bitrate';
-import { mapChangeEv } from '../EventHelpers';
+import { Radio } from '../components/Radio';
+import { Stack } from '../components/Stack';
+import { TextInput } from '../components/TextInput';
+import { Select } from '../components/Select';
+import { createUseStyles } from 'react-jss';
+import { TextSingleLine } from '../components/TextSingleLine';
 
 const initialBitrate: Bitrate = {
   value: 0,
@@ -12,6 +16,19 @@ interface CustomProps {
   bitrate: Bitrate;
   onChange: (br: Bitrate) => void;
 }
+
+const useStyles = createUseStyles({
+  custom: {
+    display: 'flex',
+    flexFlow: 'row nowrap',
+  },
+  customNumber: {
+    marginRight: '8px',
+  },
+  customUnit: {
+    width: 'auto',
+  },
+});
 
 const ThrottleCustom: React.FC<CustomProps> = ({ bitrate, onChange }) => {
   const onChangeValue = (value: string) => {
@@ -24,31 +41,23 @@ const ThrottleCustom: React.FC<CustomProps> = ({ bitrate, onChange }) => {
   const onChangeUnit = (unit: BitrateUnit) =>
     onChange({ value: bitrate.value, unit });
 
+  const styles = useStyles();
+
   return (
-    <Row form>
-      <Col sm={8} xs={6}>
-        <FormGroup>
-          <Input
-            type="number"
-            value={bitrate.value}
-            onChange={mapChangeEv(onChangeValue)}
-          />
-        </FormGroup>
-      </Col>
-      <Col sm={4} xs={6}>
-        <FormGroup>
-          <Input
-            type="select"
-            value={bitrate.unit}
-            onChange={mapChangeEv<BitrateUnit>(onChangeUnit)}
-          >
-            <option value="KiB/s">KiB/s</option>
-            <option value="MiB/s">MiB/s</option>
-            <option value="GiB/s">GiB/s</option>
-          </Input>
-        </FormGroup>
-      </Col>
-    </Row>
+    <div className={styles.custom}>
+      <TextInput
+        type="number"
+        value={bitrate.value.toString()}
+        onChange={onChangeValue}
+        className={styles.customNumber}
+      />
+      <Select<BitrateUnit>
+        value={bitrate.unit}
+        onChange={onChangeUnit}
+        options={[{ value: 'KiB/s' }, { value: 'MiB/s' }, { value: 'GiB/s' }]}
+        className={styles.customUnit}
+      />
+    </div>
   );
 };
 
@@ -79,43 +88,28 @@ export const ThrottleBitrate: React.FC<Props> = ({
   throttle,
   onChange,
 }) => (
-  <FormGroup>
-    <Label className="d-block">{title}</Label>
-    <FormGroup check inline>
-      <Label>
-        <Input
-          type="radio"
-          checked={throttle.type === 'GLOBAL'}
-          onChange={() => onChange({ type: 'GLOBAL' })}
-        />
-        Global
-      </Label>
-    </FormGroup>
-    <FormGroup check inline>
-      <Label>
-        <Input
-          type="radio"
-          checked={throttle.type === 'UNLIMITED'}
-          onChange={() => onChange({ type: 'UNLIMITED' })}
-        />
-        Unlimited
-      </Label>
-    </FormGroup>
-    <FormGroup check inline>
-      <Label>
-        <Input
-          type="radio"
-          checked={throttle.type === 'CUSTOM'}
-          onChange={() => onChange({ type: 'CUSTOM', bitrate: initialBitrate })}
-        />
-        Custom
-      </Label>
-    </FormGroup>
+  <Stack spacing="8px">
+    <TextSingleLine bold>{title}</TextSingleLine>
+    <Radio
+      label="Global"
+      checked={throttle.type === 'GLOBAL'}
+      onChange={() => onChange({ type: 'GLOBAL' })}
+    />
+    <Radio
+      label="Unlimited"
+      checked={throttle.type === 'UNLIMITED'}
+      onChange={() => onChange({ type: 'UNLIMITED' })}
+    />
+    <Radio
+      label="Custom"
+      checked={throttle.type === 'CUSTOM'}
+      onChange={() => onChange({ type: 'CUSTOM', bitrate: initialBitrate })}
+    />
     {throttle.type === 'CUSTOM' && (
       <ThrottleCustom
         bitrate={throttle.bitrate}
         onChange={(bitrate) => onChange({ type: 'CUSTOM', bitrate })}
       />
     )}
-  </FormGroup>
+  </Stack>
 );
