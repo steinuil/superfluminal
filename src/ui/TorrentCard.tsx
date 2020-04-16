@@ -10,6 +10,7 @@ import {
   toFixed,
   fmtRatio,
 } from '../Units';
+import { FiPauseCircle, FiPlayCircle } from 'react-icons/fi';
 
 interface StyleProps {
   selected: boolean;
@@ -26,10 +27,25 @@ const useStyles = createUseStyles({
       if (props.odd) return '#303030';
       return '#2d2d2d';
     },
+    display: 'flex',
+    flexFlow: 'row nowrap',
+    alignItems: 'center',
+    borderBottom: '1px solid #4f4446',
+    boxSizing: 'border-box',
+  },
+  buttons: {
+    flexShrink: 0,
+    padding: '8px 8px 8px 0',
+  },
+  button: {
+    width: '1.5rem',
+    height: '1.5rem',
   },
   card: {
     height: '60px',
     padding: '8px',
+    flexGrow: 1,
+    overflowY: 'hidden',
   },
   title: {
     fontSize: '.9rem',
@@ -101,6 +117,7 @@ interface Props {
   onSelect: () => void;
   style?: React.CSSProperties;
   odd: boolean;
+  onTogglePaused: () => void;
 }
 
 export const TorrentCard: React.FC<Props> = memo(function TorrentCard({
@@ -117,6 +134,7 @@ export const TorrentCard: React.FC<Props> = memo(function TorrentCard({
   onSelect,
   style,
   odd,
+  onTogglePaused,
 }) {
   const done = fmtProgress(progress);
   const ratio = transferredUp / transferredDown;
@@ -193,6 +211,13 @@ export const TorrentCard: React.FC<Props> = memo(function TorrentCard({
           <div className={styles.progressShadow} />
           <div className={styles.progressBorder} />
         </div>
+      </div>
+      <div className={styles.buttons}>
+        {status === 'paused' ? (
+          <FiPlayCircle className={styles.button} onClick={onTogglePaused} />
+        ) : (
+          <FiPauseCircle className={styles.button} onClick={onTogglePaused} />
+        )}
       </div>
     </div>
   );

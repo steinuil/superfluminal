@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { State } from '../types/Store';
 import selectTorrent, { EXCLUSIVE } from '../actions/selection';
 import { TorrentCard } from './TorrentCard';
+import ws_send from '../socket';
 
 interface Props {
   id: SynapseId;
@@ -28,6 +29,12 @@ export const ConnectedTorrentRow: React.FC<Props> = ({ id, style, odd }) => {
     dispatch(selectTorrent([id], EXCLUSIVE));
   }, [id, dispatch]);
 
+  const handleTogglePaused = useCallback(() => {
+    ws_send(torrent.status === 'paused' ? 'RESUME_TORRENT' : 'PAUSE_TORRENT', {
+      id: torrent.id,
+    });
+  }, [torrent.status, torrent.id]);
+
   return (
     <TorrentCard
       name={torrent.name}
@@ -43,6 +50,7 @@ export const ConnectedTorrentRow: React.FC<Props> = ({ id, style, odd }) => {
       onSelect={handleSelect}
       style={style}
       odd={odd}
+      onTogglePaused={handleTogglePaused}
     />
   );
 };
