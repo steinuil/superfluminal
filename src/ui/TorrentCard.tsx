@@ -2,6 +2,14 @@ import React, { useMemo, memo } from 'react';
 import { TorrentStatus } from '../types/SynapseProtocol';
 import { formatAmount, formatBitrate } from '../Bitrate';
 import { createUseStyles } from 'react-jss';
+import {
+  fmtSizeBin,
+  fmtRemaining,
+  fmtProgress,
+  fmtBitrateBin,
+  toFixed,
+  fmtRatio,
+} from '../Units';
 
 interface StyleProps {
   selected: boolean;
@@ -110,45 +118,43 @@ export const TorrentCard: React.FC<Props> = memo(function TorrentCard({
   style,
   odd,
 }) {
-  const done = (progress * 100).toFixed(2);
+  const done = fmtProgress(progress);
   const ratio = transferredUp / transferredDown;
 
   const info: string = useMemo(() => {
     switch (status) {
       case 'pending':
         return [
-          formatAmount(transferredDown),
+          fmtSizeBin(transferredDown),
           'of',
-          formatAmount(size || 0),
-          `(${done}%)`,
+          fmtSizeBin(size || 0),
+          `(${done})`,
         ].join(' ');
       case 'leeching': {
         const remaining = size
-          ? Math.ceil((size - transferredDown) / rateDown / 60)
+          ? fmtRemaining({ size, transferredDown, rateDown })
           : null;
 
-        return `${formatAmount(transferredDown)} of ${formatAmount(
+        return `${fmtSizeBin(transferredDown)} of ${fmtSizeBin(
           size || 0
-        )} (${done}%) - DL: ${formatBitrate(rateDown)}, UL: ${formatBitrate(
+        )} (${done}) - DL: ${fmtBitrateBin(rateDown)}, UL: ${fmtBitrateBin(
           rateUp
-        )} - ${remaining} minutes remaining`;
+        )} - ${remaining} remaining`;
       }
       case 'paused':
         if (progress < 1) {
-          return `${formatAmount(transferredDown)} of ${
-            size ? formatAmount(size) : '??'
-          } (${done}%)`;
+          return `${fmtSizeBin(transferredDown)} of ${fmtSizeBin(
+            size || 0
+          )} (${done})`;
         }
-        return `${formatAmount(size || 0)}, uploaded ${formatAmount(
+        return `${fmtSizeBin(size || 0)}, uploaded ${fmtSizeBin(
           transferredUp
-        )} (Ratio: ${isFinite(ratio) ? ratio.toFixed(2) : '∞'})`;
+        )} (Ratio: ${fmtRatio(ratio)})`;
       case 'seeding':
       case 'idle':
         return `${formatAmount(size || 0)}, uploaded ${formatAmount(
           transferredUp
-        )} (Ratio: ${
-          isFinite(ratio) ? ratio.toFixed(2) : '∞'
-        }) - UL: ${formatBitrate(rateUp)}`;
+        )} (Ratio: ${fmtRatio(ratio)}) - UL: ${formatBitrate(rateUp)}`;
       case 'hashing':
       case 'magnet':
       case 'error':
@@ -166,8 +172,8 @@ export const TorrentCard: React.FC<Props> = memo(function TorrentCard({
 
   const styles = useStyles({
     selected,
-    availability: (availability * 100).toFixed(2),
-    done,
+    availability: toFixed(availability * 100, 2),
+    done: toFixed(progress * 100, 2),
     odd,
   });
 

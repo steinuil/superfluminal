@@ -16,7 +16,7 @@ import { search_criteria } from './searchOld';
 import Connection from './ui/connection';
 import { Layout } from './ui/Layout';
 
-Set.prototype.difference = function(set) {
+Set.prototype.difference = function (set) {
   var diff = new Set(this);
   for (var v of set) {
     diff.delete(v);
@@ -59,10 +59,10 @@ ReactDOM.render(
 //   });
 // }
 
-navigator.registerProtocolHandler(
-  'magnet',
-  window.location.origin + '/add-torrent/%s',
-  'Open magnet link with receptor'
-);
+// navigator.registerProtocolHandler(
+//   'magnet',
+//   window.location.origin + '/add-torrent/%s',
+//   'Open magnet link with receptor'
+// );
 
 Notification && Notification.requestPermission();
