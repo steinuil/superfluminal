@@ -3,12 +3,16 @@ import { createUseStyles } from 'react-jss';
 import { mapChangeEv } from '../EventHelpers';
 import { c } from '../ClassNames';
 
+interface StyleProps {
+  inline?: boolean;
+}
+
 const useStyles = createUseStyles({
   select: {
     display: 'block',
     padding: '8px 10px',
     fontSize: '1rem',
-    width: '100%',
+    width: (props: StyleProps) => (props.inline ? 'auto' : '100%'),
     boxSizing: 'border-box',
   },
 });
@@ -24,6 +28,7 @@ interface Props<T> {
   value: T;
   onChange: (value: T) => void;
   options: readonly SelectOption<T>[];
+  inline?: boolean;
 }
 
 export function Select<T extends string = string>({
@@ -32,8 +37,9 @@ export function Select<T extends string = string>({
   value,
   onChange,
   options,
+  inline,
 }: Props<T>) {
-  const styles = useStyles();
+  const styles = useStyles({ inline });
 
   return (
     <select

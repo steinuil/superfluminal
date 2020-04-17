@@ -73,9 +73,9 @@ export const Layout: React.FC<Props> = () => {
         <div className={styles.torrents}>
           <ConnectedTorrentTable />
         </div>
-        <div className={styles.footer}>
+        {/* <div className={styles.footer}>
           <ConnectedStatusBar />
-        </div>
+        </div> */}
       </div>
       <aside className={styles.sidebar}>
         <AddTorrent match={{ params: {} }} />

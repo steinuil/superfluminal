@@ -95,6 +95,7 @@ export const AddTorrentForm: FC<Props> = ({ initialMagnet, onSubmit }) => {
           uploadThrottle={uploadThrottle}
           setUploadThrottle={setUploadThrottle}
         />
+        <Divider />
         <Button
           type="submit"
           disabled={torrent === null}

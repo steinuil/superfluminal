@@ -3,12 +3,17 @@ import { mapChangeEv } from '../EventHelpers';
 import { createUseStyles } from 'react-jss';
 import { c } from '../ClassNames';
 
+interface StyleProps {
+  inline?: boolean;
+}
+
 const useStyles = createUseStyles({
   input: {
     display: 'block',
     padding: '8px 10px',
     fontSize: '1rem',
-    width: '100%',
+    width: (props: StyleProps) => (props.inline ? 'auto' : '100%'),
+    minWidth: 0,
     boxSizing: 'border-box',
   },
 });
@@ -20,6 +25,7 @@ interface Props {
   value: string;
   onChange: (value: string) => void;
   required?: boolean;
+  inline?: boolean;
 }
 
 export const TextInput: React.FC<Props> = ({
@@ -29,8 +35,9 @@ export const TextInput: React.FC<Props> = ({
   value,
   onChange,
   required,
+  inline,
 }) => {
-  const styles = useStyles();
+  const styles = useStyles({ inline });
   return (
     <input
       id={id}

@@ -16,6 +16,13 @@ export const preventDefault = <T extends BaseSyntheticEvent>(
   if (f) f(ev);
 };
 
+export const stopPropagation = <T extends BaseSyntheticEvent>(
+  f: (ev: T) => void
+) => (ev: T) => {
+  ev.stopPropagation();
+  f(ev);
+};
+
 export const onKeyboardSelect = <T = Element>(
   handler: KeyboardEventHandler<T>
 ): KeyboardEventHandler<T> => (ev) => {

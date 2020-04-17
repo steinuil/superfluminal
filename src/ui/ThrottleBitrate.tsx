@@ -4,8 +4,8 @@ import { Radio } from '../components/Radio';
 import { Stack } from '../components/Stack';
 import { TextInput } from '../components/TextInput';
 import { Select } from '../components/Select';
-import { createUseStyles } from 'react-jss';
 import { TextSingleLine } from '../components/TextSingleLine';
+import { Columns } from '../components/Columns';
 
 const initialBitrate: Bitrate = {
   value: 0,
@@ -16,19 +16,6 @@ interface CustomProps {
   bitrate: Bitrate;
   onChange: (br: Bitrate) => void;
 }
-
-const useStyles = createUseStyles({
-  custom: {
-    display: 'flex',
-    flexFlow: 'row nowrap',
-  },
-  customNumber: {
-    marginRight: '8px',
-  },
-  customUnit: {
-    width: 'auto',
-  },
-});
 
 const ThrottleCustom: React.FC<CustomProps> = ({ bitrate, onChange }) => {
   const onChangeValue = (value: string) => {
@@ -41,23 +28,20 @@ const ThrottleCustom: React.FC<CustomProps> = ({ bitrate, onChange }) => {
   const onChangeUnit = (unit: BitrateUnit) =>
     onChange({ value: bitrate.value, unit });
 
-  const styles = useStyles();
-
   return (
-    <div className={styles.custom}>
+    <Columns spacing="8px">
       <TextInput
         type="number"
         value={bitrate.value.toString()}
         onChange={onChangeValue}
-        className={styles.customNumber}
       />
       <Select<BitrateUnit>
         value={bitrate.unit}
         onChange={onChangeUnit}
         options={[{ value: 'KiB/s' }, { value: 'MiB/s' }, { value: 'GiB/s' }]}
-        className={styles.customUnit}
+        inline
       />
-    </div>
+    </Columns>
   );
 };
 

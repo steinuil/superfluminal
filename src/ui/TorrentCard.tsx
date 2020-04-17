@@ -7,15 +7,14 @@ import {
   fmtRemaining,
   fmtProgress,
   fmtBitrateBin,
-  toFixed,
   fmtRatio,
 } from '../Units';
-import { FiPauseCircle, FiPlayCircle } from 'react-icons/fi';
+import { FiPauseCircle, FiPlayCircle, FiInfo } from 'react-icons/fi';
+import { stopPropagation, onKeyboardSelect } from '../EventHelpers';
+import { ProgressBar } from './ProgressBar';
 
 interface StyleProps {
   selected: boolean;
-  done: string;
-  availability: string;
   odd: boolean;
 }
 
@@ -36,10 +35,15 @@ const useStyles = createUseStyles({
   buttons: {
     flexShrink: 0,
     padding: '8px 8px 8px 0',
+    display: 'flex',
+    flexFlow: 'column nowrap',
   },
   button: {
     width: '1.5rem',
     height: '1.5rem',
+    '&:not(:last-child)': {
+      marginBottom: '8px',
+    },
   },
   card: {
     height: '60px',
@@ -60,46 +64,6 @@ const useStyles = createUseStyles({
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-  },
-  progressContainer: {
-    height: '14px',
-    width: '100%',
-    backgroundColor: '#EEE',
-    position: 'relative',
-    marginTop: '4px',
-  },
-  availabilityBar: {
-    backgroundColor: '#CCC',
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    bottom: 0,
-    width: (props: StyleProps) => `${props.availability}%`,
-  },
-  progressBar: {
-    backgroundColor: '#40c9db',
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    bottom: 0,
-    width: (props: StyleProps) => `${props.done}%`,
-  },
-  progressShadow: {
-    position: 'absolute',
-    bottom: '0',
-    right: '0',
-    left: '0',
-    height: '7px',
-    backgroundColor: 'black',
-    opacity: 0.1,
-  },
-  progressBorder: {
-    position: 'absolute',
-    top: '0',
-    bottom: '0',
-    right: '0',
-    left: '0',
-    border: '1px solid rgba(0, 0, 0, 0.25)',
   },
 });
 
@@ -190,8 +154,6 @@ export const TorrentCard: React.FC<Props> = memo(function TorrentCard({
 
   const styles = useStyles({
     selected,
-    availability: toFixed(availability * 100, 2),
-    done: toFixed(progress * 100, 2),
     odd,
   });
 
@@ -205,19 +167,25 @@ export const TorrentCard: React.FC<Props> = memo(function TorrentCard({
       <div className={styles.card}>
         <div className={styles.title}>{name}</div>
         <div className={styles.info}>{info}</div>
-        <div className={styles.progressContainer}>
-          <div className={styles.availabilityBar} />
-          <div className={styles.progressBar} />
-          <div className={styles.progressShadow} />
-          <div className={styles.progressBorder} />
-        </div>
+        <ProgressBar availability={availability} progress={progress} />
       </div>
       <div className={styles.buttons}>
         {status === 'paused' ? (
-          <FiPlayCircle className={styles.button} onClick={onTogglePaused} />
+          <FiPlayCircle
+            className={styles.button}
+            tabIndex={0}
+            onClick={stopPropagation(onTogglePaused)}
+            onKeyDown={onKeyboardSelect(onTogglePaused)}
+          />
         ) : (
-          <FiPauseCircle className={styles.button} onClick={onTogglePaused} />
+          <FiPauseCircle
+            className={styles.button}
+            tabIndex={0}
+            onClick={stopPropagation(onTogglePaused)}
+            onKeyDown={onKeyboardSelect(onTogglePaused)}
+          />
         )}
+        <FiInfo className={styles.button} />
       </div>
     </div>
   );
