@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "Web client for synapse",
   "main": "index.js",
-  "author": "Drew DeVault <sir@cmpwn.com>",
+  "author": "steinuil <steenuil.owl@gmail.com",
+  "contributors": [
+    "Drew DeVault <sir@cmpwn.com>"
+  ],
   "license": "BSD-3-Clause",
   "scripts": {
     "build": "webpack",
