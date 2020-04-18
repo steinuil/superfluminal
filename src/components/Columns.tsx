@@ -1,6 +1,7 @@
 import React, { CSSProperties } from 'react';
 import { createUseStyles } from 'react-jss';
 import { c } from '../ClassNames';
+import { onKeyboardSelect } from '../EventHelpers';
 
 interface StyleProps {
   spacing: string;
@@ -21,6 +22,8 @@ interface Props {
   spacing: string;
   className?: string;
   style?: CSSProperties;
+  tabIndex?: number;
+  onClick?: () => void;
 }
 
 export const Columns: React.FC<Props> = ({
@@ -28,11 +31,19 @@ export const Columns: React.FC<Props> = ({
   children,
   className,
   style,
+  tabIndex,
+  onClick,
 }) => {
   const styles = useStyles({ spacing });
 
   return (
-    <div className={c(styles.column, className)} style={style}>
+    <div
+      tabIndex={tabIndex}
+      onClick={onClick}
+      onKeyDown={onClick && onKeyboardSelect(onClick)}
+      className={c(styles.column, className)}
+      style={style}
+    >
       {children}
     </div>
   );

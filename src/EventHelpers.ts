@@ -17,10 +17,10 @@ export const preventDefault = <T extends BaseSyntheticEvent>(
 };
 
 export const stopPropagation = <T extends BaseSyntheticEvent>(
-  f: (ev: T) => void
+  f?: (ev: T) => void
 ) => (ev: T) => {
   ev.stopPropagation();
-  f(ev);
+  if (f) f(ev);
 };
 
 export const onKeyboardSelect = <T = Element>(

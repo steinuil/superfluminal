@@ -143,7 +143,12 @@ export const TorrentCard: React.FC<Props> = memo(function TorrentCard({
   });
 
   return (
-    <Columns spacing="8px" className={styles.container} style={style}>
+    <Columns
+      spacing="8px"
+      className={styles.container}
+      style={style}
+      onClick={onSelect}
+    >
       <Stack spacing="8px" className={styles.card}>
         <TextSingleLine className={styles.title}>{name}</TextSingleLine>
         <TextSingleLine fontSize="13px">{info}</TextSingleLine>
@@ -156,7 +161,7 @@ export const TorrentCard: React.FC<Props> = memo(function TorrentCard({
             tabIndex={0}
             role="button"
             onClick={stopPropagation(onTogglePaused)}
-            onKeyDown={onKeyboardSelect(onTogglePaused)}
+            onKeyDown={onKeyboardSelect(stopPropagation(onTogglePaused))}
           />
         ) : (
           <FiPauseCircle
@@ -164,10 +169,15 @@ export const TorrentCard: React.FC<Props> = memo(function TorrentCard({
             tabIndex={0}
             role="button"
             onClick={stopPropagation(onTogglePaused)}
-            onKeyDown={onKeyboardSelect(onTogglePaused)}
+            onKeyDown={onKeyboardSelect(stopPropagation(onTogglePaused))}
           />
         )}
-        <FiInfo className={styles.button} tabIndex={0} />
+        <FiInfo
+          className={styles.button}
+          tabIndex={0}
+          onClick={stopPropagation()}
+          onKeyDown={onKeyboardSelect(stopPropagation())}
+        />
       </Stack>
     </Columns>
   );

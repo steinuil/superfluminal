@@ -47,7 +47,7 @@ const TorrentFileInfo: React.FC<TorrentFileInfoProps> = ({ file }) => {
       )}
     </Stack>
   ) : (
-    <TextSingleLine>Loading...</TextSingleLine>
+    <TextSingleLine>Parsing .torrent file...</TextSingleLine>
   );
 };
 
