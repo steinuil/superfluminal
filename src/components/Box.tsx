@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { createUseStyles } from 'react-jss';
 import { c } from '../ClassNames';
 
@@ -16,17 +16,23 @@ const useStyles = createUseStyles({
 
 interface Props {
   className?: string;
+  style?: CSSProperties;
   padding?: string;
   background?: string;
 }
 
 export const Box: React.FC<Props> = ({
   className,
+  style,
   padding,
   background,
   children,
 }) => {
   const styles = useStyles({ padding, background });
 
-  return <div className={c(styles.box, className)}>{children}</div>;
+  return (
+    <div style={style} className={c(styles.box, className)}>
+      {children}
+    </div>
+  );
 };

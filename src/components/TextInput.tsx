@@ -14,7 +14,6 @@ const useStyles = createUseStyles({
     fontSize: '1rem',
     width: (props: StyleProps) => (props.inline ? 'auto' : '100%'),
     minWidth: 0,
-    boxSizing: 'border-box',
   },
 });
 

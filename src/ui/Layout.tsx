@@ -12,6 +12,7 @@ const useStyles = createUseStyles({
       margin: '0',
       padding: '0',
       border: '0',
+      boxSizing: 'border-box',
     },
     body: {
       fontFamily: [
@@ -27,6 +28,7 @@ const useStyles = createUseStyles({
         'Segoe UI Symbol',
       ],
       fontSize: '16px',
+      lineHeight: '24px',
       backgroundColor: '#2d2d2d',
       color: '#c4c8cc',
       scrollbarColor: '#555a5e #2d2d2d',

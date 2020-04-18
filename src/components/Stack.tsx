@@ -1,5 +1,6 @@
 import React from 'react';
 import { createUseStyles } from 'react-jss';
+import { c } from '../ClassNames';
 
 interface StyleProps {
   padding?: string;
@@ -10,7 +11,6 @@ const useStyles = createUseStyles({
   stack: {
     padding: (props: StyleProps) => props.padding,
     width: '100%',
-    boxSizing: 'border-box',
     '& > *:not(:last-child)': {
       marginBottom: (props: StyleProps) => props.spacing,
     },
@@ -18,12 +18,18 @@ const useStyles = createUseStyles({
 });
 
 interface Props {
+  className?: string;
   padding?: string;
   spacing: string;
 }
 
-export const Stack: React.FC<Props> = ({ padding, spacing, children }) => {
+export const Stack: React.FC<Props> = ({
+  className,
+  padding,
+  spacing,
+  children,
+}) => {
   const styles = useStyles({ padding, spacing });
 
-  return <div className={styles.stack}>{children}</div>;
+  return <div className={c(styles.stack, className)}>{children}</div>;
 };

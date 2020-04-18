@@ -13,7 +13,6 @@ const useStyles = createUseStyles({
     width: '100%',
     backgroundColor: '#EEE',
     position: 'relative',
-    marginTop: '4px',
   },
   availability: {
     backgroundColor: '#CCC',

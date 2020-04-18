@@ -24,7 +24,6 @@ const useStyles = createUseStyles({
     width: '.8rem',
     backgroundColor: 'black',
     borderRadius: '50%',
-    boxSizing: 'border-box',
   },
 });
 

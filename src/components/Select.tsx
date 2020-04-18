@@ -13,7 +13,6 @@ const useStyles = createUseStyles({
     padding: '8px 10px',
     fontSize: '1rem',
     width: (props: StyleProps) => (props.inline ? 'auto' : '100%'),
-    boxSizing: 'border-box',
   },
 });
 
