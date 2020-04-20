@@ -30,7 +30,7 @@ export const TorrentTable: React.FC<Props> = ({
   const itemKey = useCallback((index: number) => torrents[index], [torrents]);
 
   const Row = useCallback(
-    ({ index, style }: RowProps) => {
+    function Row({ index, style }: RowProps) {
       const id = torrents[index];
 
       const handleSelect = useCallback(() => onSelectTorrent(id), [

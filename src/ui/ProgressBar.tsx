@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React from 'react';
 import { createUseStyles } from 'react-jss';
 import { toFixed } from '../Units';
 
@@ -54,10 +54,7 @@ interface Props {
   progress: number;
 }
 
-export const ProgressBar: React.FC<Props> = memo(function ({
-  availability,
-  progress,
-}) {
+export const ProgressBar: React.FC<Props> = ({ availability, progress }) => {
   const styles = useStyles({
     availability: toFixed(availability * 100, 2),
     done: toFixed(progress * 100, 2),
@@ -71,4 +68,4 @@ export const ProgressBar: React.FC<Props> = memo(function ({
       <div className={styles.border} />
     </div>
   );
-});
+};
