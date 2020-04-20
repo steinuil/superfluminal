@@ -1,37 +1,43 @@
 import React from 'react';
-import { TorrentOptions, AddTorrentForm } from './AddTorrentForm';
+import { AddTorrentForm, TorrentOptions } from './AddTorrentForm';
 import { SelectedTorrent } from './AddTorrentSelect';
 import { uploadTorrentFile, uploadMagnet } from '../UploadTorrent';
 import { push } from 'connected-react-router';
 import { useDispatch, useSelector } from 'react-redux';
+import { State } from '../types/Store';
 
 interface Props {
-  // onAddMagnet: (magnet: string, options: TorrentOptions) => void;
-  // onAddTorrentFile: (file: File, options: TorrentOptions) => void;
-  // match: { params: Record<string, string> };
   onClose: () => void;
 }
+
+const upload = (
+  t: SelectedTorrent,
+  options: TorrentOptions,
+  socket: State['socket']
+) => {
+  switch (t.type) {
+    case 'FILE':
+      return uploadTorrentFile(t.file, options, socket);
+    case 'MAGNET':
+      return uploadMagnet(t.magnet, options);
+  }
+};
 
 export const AddTorrent: React.FC<Props> = ({ onClose }) => {
   const dispatch = useDispatch();
 
-  const socket = useSelector(({ socket }: any) => socket);
+  const socket = useSelector<State, State['socket']>(({ socket }) => socket);
 
   const handleSubmit = (t: SelectedTorrent, options: TorrentOptions) => {
-    switch (t.type) {
-      case 'FILE':
-        uploadTorrentFile(t.file, options, socket).then((id) => {
-          dispatch(push(`/torrents/${id}`));
-          onClose();
-        });
-        break;
-      case 'MAGNET':
-        uploadMagnet(t.magnet, options).then((id) => {
-          dispatch(push(`/torrents/${id}`));
-          onClose();
-        });
-        break;
-    }
+    upload(t, options, socket).then(
+      (id) => {
+        dispatch(push(`/torrents/${id}`));
+        onClose();
+      },
+      (err) => {
+        console.error(err);
+      }
+    );
   };
 
   return (

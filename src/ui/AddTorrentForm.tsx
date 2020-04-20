@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FC, useState } from 'react';
 import { AddTorrentSelect, SelectedTorrent } from './AddTorrentSelect';
-import { TorrentOptions } from './TorrentOptions';
+import { AddTorrentOptions } from './AddTorrentOptions';
 import { AddTorrentInfo } from './AddTorrentInfo';
 import { Throttle } from './ThrottleBitrate';
 import { Button } from '../components/Button';
@@ -12,6 +12,7 @@ import { createUseStyles } from 'react-jss';
 import { Columns } from '../components/Columns';
 import { FiX } from 'react-icons/fi';
 import { onKeyboardSelect } from '../EventHelpers';
+import { useToggle } from '../hooks/UseToggle';
 
 const useStyles = createUseStyles({
   container: {
@@ -55,8 +56,8 @@ export const AddTorrentForm: FC<Props> = ({
       : null
   );
 
-  const [startImmediately, setStartImmediately] = useState(true);
-  const [shouldImport, setShouldImport] = useState(false);
+  const [startImmediately, toggleStartImmediately] = useToggle(true);
+  const [shouldImport, toggleShouldImport] = useToggle(false);
   const [path, setPath] = useState('');
   const [priority, setPriority] = useState<1 | 2 | 3 | 4 | 5>(3);
   const [downloadStrategy, setDownloadStrategy] = useState('rarest');
@@ -103,12 +104,12 @@ export const AddTorrentForm: FC<Props> = ({
           <AddTorrentSelect onSubmit={setTorrent} />
         )}
         <Divider />
-        <TorrentOptions
+        <AddTorrentOptions
           startImmediately={startImmediately}
-          setStartImmediately={setStartImmediately}
+          toggleStartImmediately={toggleStartImmediately}
           hasImport={!!torrent && torrent.type === 'FILE'}
           shouldImport={shouldImport}
-          setShouldImport={setShouldImport}
+          toggleShouldImport={toggleShouldImport}
           path={path}
           setPath={setPath}
           priority={priority}

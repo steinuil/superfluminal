@@ -1,6 +1,6 @@
 import React, { CSSProperties, useCallback } from 'react';
 import { SynapseId } from '../types/SynapseProtocol';
-import { ConnectedTorrentRow } from './ConnectedTorrentRow';
+import { ConnectedTorrentCard } from './ConnectedTorrentCard';
 import { FixedSizeList } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
@@ -11,7 +11,7 @@ interface RowProps {
 }
 
 const Row: React.FC<RowProps> = ({ index, style, data: torrents }) => (
-  <ConnectedTorrentRow
+  <ConnectedTorrentCard
     id={torrents[index]}
     style={style}
     odd={index % 2 !== 0}

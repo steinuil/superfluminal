@@ -17,7 +17,7 @@ interface Selected {
   selected: boolean;
 }
 
-export const ConnectedTorrentRow: React.FC<Props> = ({ id, style, odd }) => {
+export const ConnectedTorrentCard: React.FC<Props> = ({ id, style, odd }) => {
   const { torrent, selected } = useSelector<State, Selected>((s) => ({
     torrent: s.torrents[id],
     selected: s.selection.includes(id),

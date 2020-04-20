@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FC, SetStateAction } from 'react';
+import { FC } from 'react';
 import { ThrottleBitrate, Throttle } from './ThrottleBitrate';
 import { Stack } from '../components/Stack';
 import { TextField } from '../components/TextField';
@@ -8,10 +8,10 @@ import { SelectField } from '../components/SelectField';
 
 interface Props {
   startImmediately: boolean;
-  setStartImmediately: (b: SetStateAction<boolean>) => void;
+  toggleStartImmediately: () => void;
   hasImport: boolean;
   shouldImport: boolean;
-  setShouldImport: (b: SetStateAction<boolean>) => void;
+  toggleShouldImport: () => void;
   path: string;
   setPath: (p: string) => void;
   priority: 1 | 2 | 3 | 4 | 5;
@@ -24,12 +24,12 @@ interface Props {
   setUploadThrottle: (t: Throttle) => void;
 }
 
-export const TorrentOptions: FC<Props> = ({
+export const AddTorrentOptions: FC<Props> = ({
   startImmediately,
-  setStartImmediately,
+  toggleStartImmediately,
   hasImport,
   shouldImport,
-  setShouldImport,
+  toggleShouldImport,
   path,
   setPath,
   priority,
@@ -67,13 +67,13 @@ export const TorrentOptions: FC<Props> = ({
     <CheckboxField
       label="Start immediately"
       checked={startImmediately}
-      onChange={() => setStartImmediately((p) => !p)}
+      onChange={toggleStartImmediately}
     />
     {hasImport && (
       <CheckboxField
         label="Import (skip hash check)"
         checked={shouldImport}
-        onChange={() => setShouldImport((p) => !p)}
+        onChange={toggleShouldImport}
       />
     )}
     <ThrottleBitrate
