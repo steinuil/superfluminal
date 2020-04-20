@@ -9,6 +9,7 @@ import { Definition } from '../components/Definition';
 import { fmtSizeBin } from '../Units';
 import { TextSingleLine } from '../components/TextSingleLine';
 import { TorrentInfo } from './TorrentInfo';
+import { LongText } from './LongText';
 
 interface MagnetInfoProps {
   magnet: string;
@@ -56,7 +57,9 @@ interface Props {
 
 export const AddTorrentInfo: React.FC<Props> = ({ torrent, onCancel }) => (
   <Stack spacing="16px">
-    <div>{torrent.type === 'FILE' ? torrent.file.name : torrent.magnet}</div>
+    <LongText>
+      {torrent.type === 'FILE' ? torrent.file.name : torrent.magnet}
+    </LongText>
     {torrent.type === 'FILE' ? (
       <TorrentFileInfo file={torrent.file} />
     ) : (

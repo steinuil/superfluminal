@@ -1,6 +1,7 @@
 import React from 'react';
 import { TextSingleLine } from './TextSingleLine';
 import { Stack } from './Stack';
+import { LongText } from '../ui/LongText';
 
 interface Props {
   label: string;
@@ -9,6 +10,6 @@ interface Props {
 export const Definition: React.FC<Props> = ({ label, children }) => (
   <Stack spacing="4px">
     <TextSingleLine bold>{label}</TextSingleLine>
-    <div>{children}</div>
+    <LongText>{children}</LongText>
   </Stack>
 );
