@@ -9,13 +9,22 @@ import { Stack } from '../components/Stack';
 import { Divider } from '../components/Divider';
 import { TextSingleLine } from '../components/TextSingleLine';
 import { createUseStyles } from 'react-jss';
+import { Columns } from '../components/Columns';
+import { FiX } from 'react-icons/fi';
+import { onKeyboardSelect } from '../EventHelpers';
 
 const useStyles = createUseStyles({
   container: {
-    width: '400px',
     maxHeight: '100%',
     overflowY: 'auto',
     overflowX: 'hidden',
+  },
+  title: {
+    flexGrow: 1,
+  },
+  closeButton: {
+    flexShrink: 0,
+    display: 'block',
   },
 });
 
@@ -32,9 +41,14 @@ export interface TorrentOptions {
 interface Props {
   initialMagnet?: string;
   onSubmit: (torrent: SelectedTorrent, options: TorrentOptions) => void;
+  onClose: () => void;
 }
 
-export const AddTorrentForm: FC<Props> = ({ initialMagnet, onSubmit }) => {
+export const AddTorrentForm: FC<Props> = ({
+  initialMagnet,
+  onSubmit,
+  onClose,
+}) => {
   const [torrent, setTorrent] = useState<SelectedTorrent | null>(() =>
     initialMagnet
       ? { type: 'MAGNET', magnet: decodeURIComponent(initialMagnet) }
@@ -71,7 +85,18 @@ export const AddTorrentForm: FC<Props> = ({ initialMagnet, onSubmit }) => {
   return (
     <div className={styles.container}>
       <Stack spacing="16px" padding="16px">
-        <TextSingleLine bold>Add torrent</TextSingleLine>
+        <Columns spacing="8px">
+          <TextSingleLine bold fontSize="18px" className={styles.title}>
+            Add torrent
+          </TextSingleLine>
+          <FiX
+            size="24px"
+            className={styles.closeButton}
+            tabIndex={0}
+            onClick={onClose}
+            onKeyDown={onKeyboardSelect(onClose)}
+          />
+        </Columns>
         {torrent ? (
           <AddTorrentInfo torrent={torrent} onCancel={() => setTorrent(null)} />
         ) : (

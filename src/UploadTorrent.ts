@@ -81,8 +81,12 @@ export const uploadTorrentFile = async (
 
   const extant = await uploadResponses.next().value;
 
+  if (extant.type === 'INVALID_REQUEST') {
+    throw new Error(extant.reason);
+  }
+
   if (extant.type !== 'RESOURCES_EXTANT') {
-    throw new Error(`expected RESOURCES_EXTANT: ${JSON.stringify(offer)}`);
+    throw new Error(`expected RESOURCES_EXTANT: ${JSON.stringify(extant)}`);
   }
 
   const [id] = extant.ids;

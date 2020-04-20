@@ -8,6 +8,7 @@ import { Button } from '../components/Button';
 import { Definition } from '../components/Definition';
 import { fmtSizeBin } from '../Units';
 import { TextSingleLine } from '../components/TextSingleLine';
+import { TorrentInfo } from './TorrentInfo';
 
 interface MagnetInfoProps {
   magnet: string;
@@ -35,17 +36,14 @@ const TorrentFileInfo: React.FC<TorrentFileInfoProps> = ({ file }) => {
   const info = usePromise(getTorrentInfo);
 
   return info ? (
-    <Stack spacing="8px">
-      <Definition label="Name">{info.name}</Definition>
-      <Definition label="Size">{fmtSizeBin(info.length)}</Definition>
-      <Definition label="Type">
-        {info.private ? 'Private' : 'Public'}
-      </Definition>
-      {info.comment && <Definition label="Comment">{info.comment}</Definition>}
-      {info.createdBy && (
-        <Definition label="Creator">{info.createdBy}</Definition>
-      )}
-    </Stack>
+    <TorrentInfo
+      name={info.name}
+      size={info.length}
+      isPrivate={info.private}
+      comment={info.comment}
+      creationDate={info.creationDate}
+      createdBy={info.createdBy}
+    />
   ) : (
     <TextSingleLine>Parsing .torrent file...</TextSingleLine>
   );

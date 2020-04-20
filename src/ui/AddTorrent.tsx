@@ -8,10 +8,11 @@ import { useDispatch, useSelector } from 'react-redux';
 interface Props {
   // onAddMagnet: (magnet: string, options: TorrentOptions) => void;
   // onAddTorrentFile: (file: File, options: TorrentOptions) => void;
-  match: { params: Record<string, string> };
+  // match: { params: Record<string, string> };
+  onClose: () => void;
 }
 
-export const AddTorrent: React.FC<Props> = ({ match }) => {
+export const AddTorrent: React.FC<Props> = ({ onClose }) => {
   const dispatch = useDispatch();
 
   const socket = useSelector(({ socket }: any) => socket);
@@ -19,22 +20,25 @@ export const AddTorrent: React.FC<Props> = ({ match }) => {
   const handleSubmit = (t: SelectedTorrent, options: TorrentOptions) => {
     switch (t.type) {
       case 'FILE':
-        uploadTorrentFile(t.file, options, socket).then((id) =>
-          dispatch(push(`/torrents/${id}`))
-        );
+        uploadTorrentFile(t.file, options, socket).then((id) => {
+          dispatch(push(`/torrents/${id}`));
+          onClose();
+        });
         break;
       case 'MAGNET':
-        uploadMagnet(t.magnet, options).then((id) =>
-          dispatch(push(`/torrents/${id}`))
-        );
+        uploadMagnet(t.magnet, options).then((id) => {
+          dispatch(push(`/torrents/${id}`));
+          onClose();
+        });
         break;
     }
   };
 
   return (
     <AddTorrentForm
-      initialMagnet={match.params.magnet}
+      initialMagnet=""
       onSubmit={handleSubmit}
+      onClose={onClose}
     />
   );
 };

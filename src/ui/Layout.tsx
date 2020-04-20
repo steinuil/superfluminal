@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ConnectedTorrentTable } from './ConnectedTorrentTable';
-import { ConnectedStatusBar } from './ConnectedStatusBar';
 import { createUseStyles } from 'react-jss';
 import { AddTorrent } from './AddTorrent';
 import { TopBar } from './TopBar';
 import { ConnectionOverlay } from './ConnectionOverlay';
+import { SynapseId } from '../types/SynapseProtocol';
+
+interface StyleProps {
+  isSidebarOpen: boolean;
+}
 
 const useStyles = createUseStyles({
   '@global': {
@@ -44,6 +48,9 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
     flexWrap: 'nowrap',
+    '@media (max-width: 575.98px)': {
+      display: (props: StyleProps) => (props.isSidebarOpen ? 'none' : 'flex'),
+    },
   },
   header: {
     flexShrink: 0,
@@ -56,32 +63,48 @@ const useStyles = createUseStyles({
   },
   sidebar: {
     flexShrink: 0,
+    flexGrow: 1,
     borderLeft: '1px solid #3f4446',
+    minWidth: '250px',
+    maxWidth: '400px',
+    '@media (max-width: 575.98px)': {
+      borderLeft: 0,
+      maxWidth: 'unset',
+    },
   },
 });
 
 interface Props {}
 
+type SidebarState =
+  | { state: 'ADD_TORRENT' }
+  | { state: 'SETTINGS' }
+  | { state: 'TORRENT_INFO'; torrent: SynapseId };
+
 export const Layout: React.FC<Props> = () => {
-  const styles = useStyles();
+  const [sidebar, setSidebar] = useState<SidebarState | null>(null);
+
+  const styles = useStyles({ isSidebarOpen: sidebar !== null });
 
   return (
     <div className={styles.root}>
       <ConnectionOverlay />
       <div className={styles.main}>
         <div className={styles.header}>
-          <TopBar />
+          <TopBar
+            onAddTorrent={() => setSidebar({ state: 'ADD_TORRENT' })}
+            onSettings={() => setSidebar({ state: 'SETTINGS' })}
+          />
         </div>
         <div className={styles.torrents}>
           <ConnectedTorrentTable />
         </div>
-        {/* <div className={styles.footer}>
-          <ConnectedStatusBar />
-        </div> */}
       </div>
-      <aside className={styles.sidebar}>
-        <AddTorrent match={{ params: {} }} />
-      </aside>
+      {sidebar && (
+        <aside className={styles.sidebar}>
+          <AddTorrent onClose={() => setSidebar(null)} />
+        </aside>
+      )}
     </div>
   );
 };

@@ -11,7 +11,8 @@ import { filter_subscribe } from '../actions/filter_subscribe';
 
 const useStyles = createUseStyles({
   container: {
-    width: '400px',
+    maxWidth: '400px',
+    width: '100%',
   },
 });
 

@@ -74,12 +74,12 @@ const adaptTorrentFile = (raw: RawTorrentFile): TorrentFile => {
     pieces,
     announce,
     comment: raw.comment ? decoder.decode(raw.comment) : null,
-    creationDate: raw['creation date'] ? new Date(raw['creation date']) : null,
+    creationDate: raw['creation date']
+      ? new Date(raw['creation date'] * 1000)
+      : null,
     createdBy: raw['created by'] ? decoder.decode(raw['created by']) : null,
   };
 };
 
 export const readTorrentFile = (file: File): Promise<TorrentFile> =>
-  readFile(file)
-    .then(decode)
-    .then(adaptTorrentFile);
+  readFile(file).then(decode).then(adaptTorrentFile);
