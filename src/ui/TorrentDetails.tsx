@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import { Stack } from '../components/Stack';
 import { TorrentInfo } from './TorrentInfo';
@@ -18,6 +18,7 @@ import {
   PeerResource,
 } from '../types/SynapseProtocol';
 import selectTorrent, { EXCLUSIVE } from '../actions/selection';
+import { TorrentDetailsFiles } from './TorrentDetailsFiles';
 
 const useStyles = createUseStyles({});
 
@@ -54,6 +55,7 @@ export const TorrentDetails: React.FC<Props> = ({ torrentId, onClose }) => {
       ),
       peers: Object.values(s.peers).filter((f) => f.torrent_id === torrentId),
     }),
+    // not very fast
     (left, right) =>
       left.torrent === right.torrent &&
       left.files.every((f) => right.files.includes(f)) &&
@@ -66,6 +68,10 @@ export const TorrentDetails: React.FC<Props> = ({ torrentId, onClose }) => {
   const torrentDate = useMemo(() => new Date(torrent.created), [
     torrent.created,
   ]);
+
+  const [selectedTab, setSelectedTab] = useState<
+    'SETTINGS' | 'FILES' | 'PEERS' | 'TRACKERS'
+  >('SETTINGS');
 
   return (
     <Stack spacing="16px" padding="16px">
@@ -80,31 +86,35 @@ export const TorrentDetails: React.FC<Props> = ({ torrentId, onClose }) => {
       />
       <Divider />
       <Columns spacing="8px">
-        <Button type="button">
+        <Button type="button" onClick={() => setSelectedTab('SETTINGS')}>
           <FiSettings />
         </Button>
-        <Button type="button">
+        <Button type="button" onClick={() => setSelectedTab('FILES')}>
           <FiFolder />
         </Button>
-        <Button type="button">
+        <Button type="button" onClick={() => setSelectedTab('PEERS')}>
           <FiUsers />
         </Button>
-        <Button type="button">
+        <Button type="button" onClick={() => setSelectedTab('TRACKERS')}>
           <FiServer />
         </Button>
       </Columns>
-      <TorrentDetailsOptions
-        path={torrent.path}
-        setPath={() => {}}
-        priority={torrent.priority}
-        setPriority={() => {}}
-        downloadStrategy={torrent.strategy}
-        setDownloadStrategy={() => {}}
-        downloadThrottle={{ type: 'GLOBAL' }}
-        uploadThrottle={{ type: 'GLOBAL' }}
-        setDownloadThrottle={() => {}}
-        setUploadThrottle={() => {}}
-      />
+      {selectedTab === 'SETTINGS' ? (
+        <TorrentDetailsOptions
+          path={torrent.path}
+          setPath={() => {}}
+          priority={torrent.priority}
+          setPriority={() => {}}
+          downloadStrategy={torrent.strategy}
+          setDownloadStrategy={() => {}}
+          downloadThrottle={{ type: 'GLOBAL' }}
+          uploadThrottle={{ type: 'GLOBAL' }}
+          setDownloadThrottle={() => {}}
+          setUploadThrottle={() => {}}
+        />
+      ) : selectedTab === 'FILES' ? (
+        <TorrentDetailsFiles files={files} />
+      ) : null}
     </Stack>
   );
 };

@@ -73,7 +73,7 @@ const useStyles = createUseStyles({
     overflowX: 'hidden',
     '@media (max-width: 575.98px)': {
       borderLeft: 0,
-      maxWidth: 'unset',
+      maxWidth: '100%',
     },
   },
 });
