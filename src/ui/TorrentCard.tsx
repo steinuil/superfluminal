@@ -67,9 +67,10 @@ interface Props {
   style?: React.CSSProperties;
   odd: boolean;
   onTogglePaused: () => void;
+  onGetInfo: () => void;
 }
 
-export const TorrentCard: React.FC<Props> = memo(function TorrentCard({
+export const TorrentCard: React.FC<Props> = ({
   name,
   status,
   size,
@@ -84,7 +85,8 @@ export const TorrentCard: React.FC<Props> = memo(function TorrentCard({
   style,
   odd,
   onTogglePaused,
-}) {
+  onGetInfo,
+}) => {
   const done = fmtProgress(progress);
   const ratio = transferredUp / transferredDown;
 
@@ -175,10 +177,10 @@ export const TorrentCard: React.FC<Props> = memo(function TorrentCard({
         <FiInfo
           className={styles.button}
           tabIndex={0}
-          onClick={stopPropagation()}
-          onKeyDown={onKeyboardSelect(stopPropagation())}
+          onClick={stopPropagation(onGetInfo)}
+          onKeyDown={onKeyboardSelect(stopPropagation(onGetInfo))}
         />
       </Stack>
     </Columns>
   );
-});
+};

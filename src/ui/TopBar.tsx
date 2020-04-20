@@ -4,15 +4,11 @@ import { Columns } from '../components/Columns';
 import { TextInput } from '../components/TextInput';
 import { Button } from '../components/Button';
 import { Box } from '../components/Box';
-import { FiFilePlus, FiSettings, FiArrowUp, FiArrowDown } from 'react-icons/fi';
+import { FiFilePlus, FiSettings } from 'react-icons/fi';
 import { Divider } from '../components/Divider';
 import { Select } from '../components/Select';
 import { onKeyboardSelect } from '../EventHelpers';
-import { Stack } from '../components/Stack';
-import { TextSingleLine } from '../components/TextSingleLine';
-import { useSelector } from 'react-redux';
-import { State } from '../types/Store';
-import { fmtBitrateBin } from '../Units';
+import { TopBarStats } from './TopBarStats';
 
 const useStyles = createUseStyles({
   container: {
@@ -38,13 +34,6 @@ export const TopBar: React.FC<Props> = ({ onAddTorrent, onSettings }) => {
   const [query, setQuery] = useState('');
 
   const [filter, setFilter] = useState('All');
-
-  const { up, down } = useSelector<State, Record<'up' | 'down', number>>(
-    ({ server }) => ({
-      up: server.rate_up,
-      down: server.rate_down,
-    })
-  );
 
   const styles = useStyles();
 
@@ -84,18 +73,7 @@ export const TopBar: React.FC<Props> = ({ onAddTorrent, onSettings }) => {
         <Button type="submit" inline>
           Search
         </Button>
-        <Stack spacing="4px" className={styles.stats}>
-          <Columns spacing="4px">
-            <FiArrowUp size="14px" />
-            <TextSingleLine fontSize="14px">{fmtBitrateBin(up)}</TextSingleLine>
-          </Columns>
-          <Columns spacing="4px">
-            <FiArrowDown size="14px" />
-            <TextSingleLine fontSize="14px">
-              {fmtBitrateBin(down)}
-            </TextSingleLine>
-          </Columns>
-        </Stack>
+        <TopBarStats className={styles.stats} />
       </Columns>
     </Box>
   );

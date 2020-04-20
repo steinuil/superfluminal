@@ -7,16 +7,7 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 interface RowProps {
   index: number;
   style: CSSProperties;
-  data: SynapseId[];
 }
-
-const Row: React.FC<RowProps> = ({ index, style, data: torrents }) => (
-  <ConnectedTorrentCard
-    id={torrents[index]}
-    style={style}
-    odd={index % 2 !== 0}
-  />
-);
 
 type SortColumn = 'name' | 'up' | 'down' | 'ul' | 'dl' | 'ratio' | 'progress';
 
@@ -28,12 +19,35 @@ interface Props {
   sortMode: 'ASC' | 'DESC';
   onSelectColumn: (col: SortColumn) => void;
   className?: string;
+  onSelectTorrent: (id: SynapseId) => void;
 }
 
-export const TorrentTable: React.FC<Props> = ({ torrents, className }) => {
-  const itemKey = useCallback(
-    (index: number, data: SynapseId[]) => data[index],
-    [torrents]
+export const TorrentTable: React.FC<Props> = ({
+  torrents,
+  className,
+  onSelectTorrent,
+}) => {
+  const itemKey = useCallback((index: number) => torrents[index], [torrents]);
+
+  const Row = useCallback(
+    ({ index, style }: RowProps) => {
+      const id = torrents[index];
+
+      const handleSelect = useCallback(() => onSelectTorrent(id), [
+        id,
+        onSelectTorrent,
+      ]);
+
+      return (
+        <ConnectedTorrentCard
+          id={id}
+          style={style}
+          odd={index % 2 !== 0}
+          onSelect={handleSelect}
+        />
+      );
+    },
+    [torrents, onSelectTorrent]
   );
 
   return (
@@ -43,7 +57,6 @@ export const TorrentTable: React.FC<Props> = ({ torrents, className }) => {
           height={height}
           itemSize={77}
           itemCount={torrents.length}
-          itemData={torrents}
           width="100%"
           itemKey={itemKey}
           className={className}

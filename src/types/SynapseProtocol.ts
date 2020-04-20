@@ -60,7 +60,10 @@ export type TorrentStrategy = 'rarest' | 'sequential';
 export interface TorrentResource extends ResourceBase<'torrent'> {
   readonly name: string | null;
   path: string;
+  readonly comment: string;
+  readonly private: boolean;
   readonly created: string;
+  readonly creator: string;
   readonly modified: string;
   readonly status: TorrentStatus;
   readonly error: string | null;

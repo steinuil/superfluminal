@@ -41,15 +41,23 @@ const COMPARATORS: Comparators = {
 
 interface Props {
   className?: string;
+  onSelectTorrent: (id: SynapseId) => void;
 }
 
-export const ConnectedTorrentTable: React.FC<Props> = ({ className }) => {
+export const ConnectedTorrentTable: React.FC<Props> = ({
+  className,
+  onSelectTorrent,
+}) => {
   const { torrentIds, torrents, selection } = useSelector<State, Selected>(
     (s) => ({
       torrentIds: Object.keys(s.torrents) as SynapseId[],
       torrents: Object.values(s.torrents),
       selection: s.selection,
-    })
+    }),
+    (left, right) =>
+      left.torrentIds.every((id) => right.torrentIds.includes(id)) &&
+      left.torrents.every((t) => right.torrents.includes(t)) &&
+      left.selection === right.selection
   );
 
   const dispatch = useDispatch();
@@ -101,6 +109,7 @@ export const ConnectedTorrentTable: React.FC<Props> = ({ className }) => {
       sortMode={sortMode}
       onSelectColumn={handleSelectColumn}
       className={className}
+      onSelectTorrent={onSelectTorrent}
     />
   );
 };

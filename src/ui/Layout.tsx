@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { ConnectedTorrentTable } from './ConnectedTorrentTable';
 import { createUseStyles } from 'react-jss';
 import { AddTorrent } from './AddTorrent';
 import { TopBar } from './TopBar';
 import { ConnectionOverlay } from './ConnectionOverlay';
 import { SynapseId } from '../types/SynapseProtocol';
+import { TorrentDetails } from './TorrentDetails';
 
 interface StyleProps {
   isSidebarOpen: boolean;
@@ -67,6 +68,9 @@ const useStyles = createUseStyles({
     borderLeft: '1px solid #3f4446',
     minWidth: '250px',
     maxWidth: '400px',
+    maxHeight: '100%',
+    overflowY: 'auto',
+    overflowX: 'hidden',
     '@media (max-width: 575.98px)': {
       borderLeft: 0,
       maxWidth: 'unset',
@@ -84,6 +88,12 @@ type SidebarState =
 export const Layout: React.FC<Props> = () => {
   const [sidebar, setSidebar] = useState<SidebarState | null>(null);
 
+  const handleClose = useCallback(() => setSidebar(null), []);
+
+  const handleSelectTorrent = useCallback((torrent: SynapseId) => {
+    setSidebar({ state: 'TORRENT_INFO', torrent });
+  }, []);
+
   const styles = useStyles({ isSidebarOpen: sidebar !== null });
 
   return (
@@ -97,12 +107,16 @@ export const Layout: React.FC<Props> = () => {
           />
         </div>
         <div className={styles.torrents}>
-          <ConnectedTorrentTable />
+          <ConnectedTorrentTable onSelectTorrent={handleSelectTorrent} />
         </div>
       </div>
       {sidebar && (
         <aside className={styles.sidebar}>
-          <AddTorrent onClose={() => setSidebar(null)} />
+          {sidebar.state === 'ADD_TORRENT' ? (
+            <AddTorrent onClose={handleClose} />
+          ) : sidebar.state === 'TORRENT_INFO' ? (
+            <TorrentDetails torrentId={sidebar.torrent} onClose={handleClose} />
+          ) : null}
         </aside>
       )}
     </div>

@@ -10,6 +10,7 @@ interface Props {
   id: SynapseId;
   style?: CSSProperties;
   odd: boolean;
+  onSelect: () => void;
 }
 
 interface Selected {
@@ -17,11 +18,20 @@ interface Selected {
   selected: boolean;
 }
 
-export const ConnectedTorrentCard: React.FC<Props> = ({ id, style, odd }) => {
-  const { torrent, selected } = useSelector<State, Selected>((s) => ({
-    torrent: s.torrents[id],
-    selected: s.selection.includes(id),
-  }));
+export const ConnectedTorrentCard: React.FC<Props> = ({
+  id,
+  style,
+  odd,
+  onSelect,
+}) => {
+  const { torrent, selected } = useSelector<State, Selected>(
+    (s) => ({
+      torrent: s.torrents[id],
+      selected: s.selection.includes(id),
+    }),
+    (left, right) =>
+      left.torrent === right.torrent && left.selected === right.selected
+  );
 
   const dispatch = useDispatch();
 
@@ -31,9 +41,9 @@ export const ConnectedTorrentCard: React.FC<Props> = ({ id, style, odd }) => {
 
   const handleTogglePaused = useCallback(() => {
     ws_send(torrent.status === 'paused' ? 'RESUME_TORRENT' : 'PAUSE_TORRENT', {
-      id: torrent.id,
+      id,
     });
-  }, [torrent.status, torrent.id]);
+  }, [torrent.status, id]);
 
   return (
     <TorrentCard
@@ -51,6 +61,7 @@ export const ConnectedTorrentCard: React.FC<Props> = ({ id, style, odd }) => {
       style={style}
       odd={odd}
       onTogglePaused={handleTogglePaused}
+      onGetInfo={onSelect}
     />
   );
 };
