@@ -1,5 +1,6 @@
 export type DirTree = readonly [string, DirTree[]] | string;
 
+// TODO: return a simple list with depth instead of a tree structure
 export function makeDirTree(paths: string[][]): DirTree[] {
   const files: DirTree[] = paths
     .filter((path) => path.length === 1)

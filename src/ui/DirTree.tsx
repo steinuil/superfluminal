@@ -1,14 +1,78 @@
-import React, { Fragment } from 'react';
+import React, { useState, useCallback } from 'react';
 import { createUseStyles } from 'react-jss';
 import { DirTree as Tree } from '../MakeDirTree';
-import { LongText } from './LongText';
+import { FiFile, FiPlus } from 'react-icons/fi';
+import { c } from '../ClassNames';
+import { onKeyboardSelect } from '../EventHelpers';
 
 const useStyles = createUseStyles({
   ul: {
-    paddingLeft: '20px',
+    listStyle: 'none',
   },
-  li: {},
+  ul2: {
+    paddingLeft: '10px',
+  },
+  li: {
+    fontSize: '14px',
+    wordBreak: 'break-all',
+    display: 'flex',
+    '&:hover': {
+      backgroundColor: '#444',
+      cursor: 'pointer',
+    },
+  },
+  icon: {
+    flexShrink: 0,
+    marginRight: '4px',
+    marginTop: '4px',
+    marginLeft: '2px',
+  },
 });
+
+// DirTree and DirTreeItem are mutually recursive.
+
+interface ItemProps {
+  path: Tree;
+  open: Set<string>;
+  toggle: (subTree: string) => void;
+  depth: number;
+}
+
+export const DirTreeItem: React.FC<ItemProps> = ({
+  path,
+  open,
+  toggle,
+  depth,
+}) => {
+  const styles = useStyles();
+
+  const onClick = useCallback(() => toggle(path[0]), [toggle, path[0]]);
+
+  if (typeof path === 'string') {
+    return (
+      <li key={path} className={styles.li}>
+        <FiFile className={styles.icon} size="16px" /> <div>{path}</div>
+      </li>
+    );
+  }
+
+  return (
+    <li>
+      <div
+        className={styles.li}
+        role="checkbox"
+        aria-checked={open.has(path[0])}
+        tabIndex={0}
+        onClick={onClick}
+        onKeyDown={onKeyboardSelect(onClick)}
+      >
+        <FiPlus className={styles.icon} size="16px" />
+        <div>{path[0]}/</div>
+      </div>
+      {open.has(path[0]) && <DirTree tree={path[1]} depth={depth + 1} />}
+    </li>
+  );
+};
 
 interface Props {
   tree: Tree[];
@@ -18,22 +82,34 @@ interface Props {
 export const DirTree: React.FC<Props> = ({ tree, depth = 0 }) => {
   const styles = useStyles();
 
+  const [open, setOpen] = useState<Set<string>>(new Set());
+
+  const toggle = useCallback(
+    (i: string) => {
+      const newState = new Set(open);
+
+      if (open.has(i)) {
+        newState.delete(i);
+      } else {
+        newState.add(i);
+      }
+
+      setOpen(newState);
+    },
+    [open]
+  );
+
   return (
-    <ul className={styles.ul}>
-      {tree.map((path) =>
-        typeof path === 'string' ? (
-          <li key={path} className={styles.li}>
-            <LongText>{path}</LongText>
-          </li>
-        ) : (
-          <Fragment key={path[0]}>
-            <li className={styles.li}>
-              <LongText>{path[0]}/</LongText>
-            </li>
-            {depth < 1 && <DirTree tree={path[1]} depth={depth + 1} />}
-          </Fragment>
-        )
-      )}
+    <ul className={c(styles.ul, depth > 0 && styles.ul2)}>
+      {tree.map((path) => (
+        <DirTreeItem
+          key={typeof path === 'string' ? path : path[0]}
+          depth={depth}
+          open={open}
+          path={path}
+          toggle={toggle}
+        />
+      ))}
     </ul>
   );
 };
