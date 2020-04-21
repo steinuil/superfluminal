@@ -62,8 +62,8 @@ export const DirTreeItem: React.FC<ItemProps> = ({
     <li>
       <div
         className={styles.li}
-        role="checkbox"
-        aria-checked={isOpen}
+        role="button"
+        aria-expanded={isOpen}
         tabIndex={0}
         onClick={onClick}
         onKeyDown={onKeyboardSelect(onClick)}
