@@ -3,6 +3,7 @@ import { createUseStyles } from 'react-jss';
 import { PeerResource } from '../types/SynapseProtocol';
 import { fmtProgress, fmtBitrateBin } from '../Units';
 import { FiArrowUp, FiArrowDown } from 'react-icons/fi';
+import { TextSingleLine } from '../components/TextSingleLine';
 
 const useStyles = createUseStyles({
   table: {
@@ -31,7 +32,7 @@ interface Props {
 export const TorrentDetailsPeers: React.FC<Props> = ({ peers }) => {
   const styles = useStyles();
 
-  return (
+  return peers.length > 0 ? (
     <table className={styles.table}>
       <tbody>
         {peers.map(({ id, ip, availability, rate_up, rate_down }) => (
@@ -54,5 +55,7 @@ export const TorrentDetailsPeers: React.FC<Props> = ({ peers }) => {
         ))}
       </tbody>
     </table>
+  ) : (
+    <TextSingleLine>No connected peers</TextSingleLine>
   );
 };

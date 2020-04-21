@@ -21,8 +21,14 @@ import selectTorrent, { EXCLUSIVE } from '../actions/selection';
 import { TorrentDetailsFiles } from './TorrentDetailsFiles';
 import { TorrentDetailsTrackers } from './TorrentDetailsTrackers';
 import { TorrentDetailsPeers } from './TorrentDetailsPeers';
+import { c } from '../ClassNames';
 
-const useStyles = createUseStyles({});
+const useStyles = createUseStyles({
+  selectedTab: {
+    backgroundColor: '#40c9db',
+    color: 'black',
+  },
+});
 
 interface Props {
   torrentId: SynapseId;
@@ -88,16 +94,32 @@ export const TorrentDetails: React.FC<Props> = ({ torrentId, onClose }) => {
       />
       <Divider />
       <Columns spacing="8px">
-        <Button type="button" onClick={() => setSelectedTab('SETTINGS')}>
+        <Button
+          type="button"
+          onClick={() => setSelectedTab('SETTINGS')}
+          className={c(selectedTab === 'SETTINGS' && styles.selectedTab)}
+        >
           <FiSettings />
         </Button>
-        <Button type="button" onClick={() => setSelectedTab('FILES')}>
+        <Button
+          type="button"
+          onClick={() => setSelectedTab('FILES')}
+          className={c(selectedTab === 'FILES' && styles.selectedTab)}
+        >
           <FiFolder />
         </Button>
-        <Button type="button" onClick={() => setSelectedTab('PEERS')}>
+        <Button
+          type="button"
+          onClick={() => setSelectedTab('PEERS')}
+          className={c(selectedTab === 'PEERS' && styles.selectedTab)}
+        >
           <FiUsers />
         </Button>
-        <Button type="button" onClick={() => setSelectedTab('TRACKERS')}>
+        <Button
+          type="button"
+          onClick={() => setSelectedTab('TRACKERS')}
+          className={c(selectedTab === 'TRACKERS' && styles.selectedTab)}
+        >
           <FiServer />
         </Button>
       </Columns>
