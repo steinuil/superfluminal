@@ -20,6 +20,7 @@ import {
 import selectTorrent, { EXCLUSIVE } from '../actions/selection';
 import { TorrentDetailsFiles } from './TorrentDetailsFiles';
 import { TorrentDetailsTrackers } from './TorrentDetailsTrackers';
+import { TorrentDetailsPeers } from './TorrentDetailsPeers';
 
 const useStyles = createUseStyles({});
 
@@ -117,7 +118,9 @@ export const TorrentDetails: React.FC<Props> = ({ torrentId, onClose }) => {
         <TorrentDetailsFiles files={files} />
       ) : selectedTab === 'TRACKERS' ? (
         <TorrentDetailsTrackers trackers={trackers} />
-      ) : null}
+      ) : (
+        <TorrentDetailsPeers peers={peers} />
+      )}
     </Stack>
   );
 };
