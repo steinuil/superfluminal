@@ -5,7 +5,7 @@ import { FiArrowUp, FiArrowDown } from 'react-icons/fi';
 import { TextSingleLine } from '../components/TextSingleLine';
 import { fmtBitrateBin } from '../Units';
 import { State } from '../types/Store';
-import { useSelector } from 'react-redux';
+import { useSelector, shallowEqual } from 'react-redux';
 
 interface Props {
   className?: string;
@@ -17,7 +17,7 @@ export const TopBarStats: React.FC<Props> = ({ className }) => {
       up: server.rate_up,
       down: server.rate_down,
     }),
-    (left, right) => left.up === right.up && left.down === right.down
+    shallowEqual
   );
 
   return (

@@ -1,6 +1,6 @@
 import React, { useCallback, CSSProperties } from 'react';
 import { TorrentResource, SynapseId } from '../types/SynapseProtocol';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { State } from '../types/Store';
 import selectTorrent, { EXCLUSIVE } from '../actions/selection';
 import { TorrentCard } from './TorrentCard';
@@ -29,8 +29,7 @@ export const ConnectedTorrentCard: React.FC<Props> = ({
       torrent: s.torrents[id],
       selected: s.selection.includes(id),
     }),
-    (left, right) =>
-      left.torrent === right.torrent && left.selected === right.selected
+    shallowEqual
   );
 
   const dispatch = useDispatch();

@@ -55,7 +55,6 @@ export const ConnectedTorrentTable: React.FC<Props> = ({
       selection: s.selection,
     }),
     (left, right) =>
-      left.torrentIds.every((id) => right.torrentIds.includes(id)) &&
       left.torrents.every((t) => right.torrents.includes(t)) &&
       left.selection === right.selection
   );
