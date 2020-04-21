@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { createUseStyles } from 'react-jss';
 import { DirTree as Tree } from '../MakeDirTree';
-import { FiFile, FiPlus } from 'react-icons/fi';
+import { FiFile, FiPlus, FiMinus } from 'react-icons/fi';
 import { c } from '../ClassNames';
 import { onKeyboardSelect } from '../EventHelpers';
 
@@ -56,20 +56,25 @@ export const DirTreeItem: React.FC<ItemProps> = ({
     );
   }
 
+  const isOpen = open.has(path[0]);
+
   return (
     <li>
       <div
         className={styles.li}
         role="checkbox"
-        aria-checked={open.has(path[0])}
+        aria-checked={isOpen}
         tabIndex={0}
         onClick={onClick}
         onKeyDown={onKeyboardSelect(onClick)}
       >
-        <FiPlus className={styles.icon} size="16px" />
+        {React.createElement(isOpen ? FiMinus : FiPlus, {
+          className: styles.icon,
+          size: '16px',
+        })}
         <div>{path[0]}/</div>
       </div>
-      {open.has(path[0]) && <DirTree tree={path[1]} depth={depth + 1} />}
+      {isOpen && <DirTree tree={path[1]} depth={depth + 1} />}
     </li>
   );
 };

@@ -9,7 +9,7 @@ import {
   fmtBitrateBin,
   fmtRatio,
 } from '../Units';
-import { FiPauseCircle, FiPlayCircle, FiInfo } from 'react-icons/fi';
+import { FiPauseCircle, FiPlayCircle, FiInfo, FiPlay } from 'react-icons/fi';
 import { stopPropagation, onKeyboardSelect } from '../EventHelpers';
 import { ProgressBar } from './ProgressBar';
 import { Columns } from '../components/Columns';
@@ -142,6 +142,8 @@ export const TorrentCard: React.FC<Props> = ({
     odd,
   });
 
+  const isPaused = status === 'paused';
+
   return (
     <Columns
       spacing="8px"
@@ -155,27 +157,15 @@ export const TorrentCard: React.FC<Props> = ({
         <ProgressBar availability={availability} progress={progress} />
       </Stack>
       <Stack spacing="8px" className={styles.buttons}>
-        {status === 'paused' ? (
-          <FiPlayCircle
-            className={styles.button}
-            size="24px"
-            strokeWidth="1.5px"
-            tabIndex={0}
-            role="button"
-            onClick={stopPropagation(onTogglePaused)}
-            onKeyDown={onKeyboardSelect(stopPropagation(onTogglePaused))}
-          />
-        ) : (
-          <FiPauseCircle
-            className={styles.button}
-            size="24px"
-            strokeWidth="1.5px"
-            tabIndex={0}
-            role="button"
-            onClick={stopPropagation(onTogglePaused)}
-            onKeyDown={onKeyboardSelect(stopPropagation(onTogglePaused))}
-          />
-        )}
+        {React.createElement(isPaused ? FiPlayCircle : FiPauseCircle, {
+          className: styles.button,
+          size: '24px',
+          strokeWidth: '1.5px',
+          tabIndex: 0,
+          role: 'button',
+          onClick: stopPropagation(onTogglePaused),
+          onKeyDown: onKeyboardSelect(stopPropagation(onTogglePaused)),
+        })}
         <FiInfo
           className={styles.button}
           size="24px"
