@@ -32,12 +32,14 @@ interface Props<T> {
   onDismiss: (v: T | null) => void;
   ignoreOverlayClick?: boolean;
   children: (onDismiss: (v?: T) => void) => JSX.Element;
+  className?: string;
 }
 
 export function Modal<T = undefined>({
   onDismiss,
   children,
   ignoreOverlayClick,
+  className,
 }: Props<T>) {
   const [isHidden, setHidden] = useState(true);
   const [hasRenderedOnce, setRenderedOnce] = useState(true);
@@ -84,7 +86,9 @@ export function Modal<T = undefined>({
 
   return (
     <div onClick={handleOverlayClick} className={styles.overlay}>
-      <div ref={modalRef}>{children(handleDismiss)}</div>
+      <div ref={modalRef} className={className}>
+        {children(handleDismiss)}
+      </div>
     </div>
   );
 }

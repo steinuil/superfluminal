@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { createUseStyles } from 'react-jss';
 import { Stack } from '../components/Stack';
 import { TorrentInfo } from './TorrentInfo';
@@ -22,6 +22,9 @@ import { TorrentDetailsFiles } from './TorrentDetailsFiles';
 import { TorrentDetailsTrackers } from './TorrentDetailsTrackers';
 import { TorrentDetailsPeers } from './TorrentDetailsPeers';
 import { c } from '../ClassNames';
+import { useToggle } from '../hooks/UseToggle';
+import { DeleteTorrentForm } from './DeleteTorrentForm';
+import ws_send from '../socket';
 
 const useStyles = createUseStyles({
   selectedTab: {
@@ -81,6 +84,27 @@ export const TorrentDetails: React.FC<Props> = ({ torrentId, onClose }) => {
     'SETTINGS' | 'FILES' | 'PEERS' | 'TRACKERS'
   >('SETTINGS');
 
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [alsoDeleteFiles, setAlsoDeleteFiles] = useToggle(false);
+
+  const openModal = useCallback(() => {
+    setDeleteModalOpen(true);
+    setAlsoDeleteFiles(false);
+  }, []);
+
+  const handleCloseModal = useCallback(
+    (shouldDelete: boolean | null) => {
+      setDeleteModalOpen(false);
+      if (!shouldDelete) return;
+      onClose();
+      ws_send('REMOVE_RESOURCE', {
+        id: torrent.id,
+        artifacts: alsoDeleteFiles,
+      });
+    },
+    [torrent, onClose, alsoDeleteFiles]
+  );
+
   return (
     <Stack spacing="16px" padding="16px">
       <FormHeader title="Torrent info" onClose={onClose} />
@@ -92,6 +116,9 @@ export const TorrentDetails: React.FC<Props> = ({ torrentId, onClose }) => {
         creationDate={torrentDate}
         createdBy={torrent.creator}
       />
+      <Button type="button" onClick={openModal}>
+        Delete torrent
+      </Button>
       <Divider />
       <Columns spacing="8px">
         <Button
@@ -142,6 +169,13 @@ export const TorrentDetails: React.FC<Props> = ({ torrentId, onClose }) => {
         <TorrentDetailsTrackers trackers={trackers} />
       ) : (
         <TorrentDetailsPeers peers={peers} />
+      )}
+      {isDeleteModalOpen && (
+        <DeleteTorrentForm
+          onDelete={handleCloseModal}
+          alsoDeleteFiles={alsoDeleteFiles}
+          toggleAlsoDeleteFiles={setAlsoDeleteFiles}
+        />
       )}
     </Stack>
   );
