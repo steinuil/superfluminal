@@ -19,6 +19,7 @@ import {
 } from '../types/SynapseProtocol';
 import selectTorrent, { EXCLUSIVE } from '../actions/selection';
 import { TorrentDetailsFiles } from './TorrentDetailsFiles';
+import { TorrentDetailsTrackers } from './TorrentDetailsTrackers';
 
 const useStyles = createUseStyles({});
 
@@ -114,6 +115,8 @@ export const TorrentDetails: React.FC<Props> = ({ torrentId, onClose }) => {
         />
       ) : selectedTab === 'FILES' ? (
         <TorrentDetailsFiles files={files} />
+      ) : selectedTab === 'TRACKERS' ? (
+        <TorrentDetailsTrackers trackers={trackers} />
       ) : null}
     </Stack>
   );
