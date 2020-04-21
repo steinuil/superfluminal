@@ -38,8 +38,6 @@ const useStyles = createUseStyles({
   button: {
     display: 'block',
     cursor: 'pointer',
-    width: '1.5rem',
-    height: '1.5rem',
   },
   card: {
     height: '60px',
@@ -160,6 +158,8 @@ export const TorrentCard: React.FC<Props> = ({
         {status === 'paused' ? (
           <FiPlayCircle
             className={styles.button}
+            size="24px"
+            strokeWidth="1.5px"
             tabIndex={0}
             role="button"
             onClick={stopPropagation(onTogglePaused)}
@@ -168,6 +168,8 @@ export const TorrentCard: React.FC<Props> = ({
         ) : (
           <FiPauseCircle
             className={styles.button}
+            size="24px"
+            strokeWidth="1.5px"
             tabIndex={0}
             role="button"
             onClick={stopPropagation(onTogglePaused)}
@@ -176,7 +178,10 @@ export const TorrentCard: React.FC<Props> = ({
         )}
         <FiInfo
           className={styles.button}
+          size="24px"
+          strokeWidth="1.5px"
           tabIndex={0}
+          role="button"
           onClick={stopPropagation(onGetInfo)}
           onKeyDown={onKeyboardSelect(stopPropagation(onGetInfo))}
         />

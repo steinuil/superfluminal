@@ -3,7 +3,7 @@ import { createUseStyles } from 'react-jss';
 
 const useStyles = createUseStyles({
   text: {
-    wordWrap: 'break-word',
+    wordBreak: 'break-word',
   },
 });
 
