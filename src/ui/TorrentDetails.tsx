@@ -25,6 +25,8 @@ import { c } from '../ClassNames';
 import { useToggle } from '../hooks/UseToggle';
 import { DeleteTorrentForm } from './DeleteTorrentForm';
 import ws_send from '../socket';
+import { loadTree, lookup, ipToNumber } from '../GetCountryByIp';
+import { usePromise } from '../hooks/UsePromise';
 
 const useStyles = createUseStyles({
   selectedTab: {
@@ -105,6 +107,16 @@ export const TorrentDetails: React.FC<Props> = ({ torrentId, onClose }) => {
     [torrent, onClose, alsoDeleteFiles]
   );
 
+  const tree = usePromise(loadTree);
+
+  const lookupIp = useCallback(
+    (ip: string): string | null => {
+      if (!tree) return null;
+      return lookup(tree, ipToNumber(ip.split(':')[0]));
+    },
+    [tree]
+  );
+
   return (
     <Stack spacing="16px" padding="16px">
       <FormHeader title="Torrent info" onClose={onClose} />
@@ -168,7 +180,7 @@ export const TorrentDetails: React.FC<Props> = ({ torrentId, onClose }) => {
       ) : selectedTab === 'TRACKERS' ? (
         <TorrentDetailsTrackers trackers={trackers} />
       ) : (
-        <TorrentDetailsPeers peers={peers} />
+        <TorrentDetailsPeers peers={peers} lookupIp={lookupIp} />
       )}
       {isDeleteModalOpen && (
         <DeleteTorrentForm

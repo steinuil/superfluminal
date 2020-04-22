@@ -31,14 +31,24 @@ interface PeerProps {
   availability: number;
   rateUp: number;
   rateDown: number;
+  lookupIp: (ip: string) => string | null;
 }
 
-const Peer: FC<PeerProps> = ({ ip, availability, rateUp, rateDown }) => {
+const Peer: FC<PeerProps> = ({
+  ip,
+  availability,
+  rateUp,
+  rateDown,
+  lookupIp,
+}) => {
   const styles = useStyles();
+
+  const country = useMemo(() => lookupIp(ip), [ip, lookupIp]);
 
   return (
     <tr className={styles.row}>
       <td className={styles.cell}>{ip.split(':')[0]}</td>
+      <td className={styles.cell}>{country && countryCodeToEmoji(country)}</td>
       <td className={styles.cell}>{fmtProgress(availability)}</td>
       <td className={styles.cell}>
         <div className={styles.rate}>
@@ -56,9 +66,10 @@ const Peer: FC<PeerProps> = ({ ip, availability, rateUp, rateDown }) => {
 
 interface Props {
   peers: PeerResource[];
+  lookupIp: (ip: string) => string | null;
 }
 
-export const TorrentDetailsPeers: React.FC<Props> = ({ peers }) => {
+export const TorrentDetailsPeers: React.FC<Props> = ({ peers, lookupIp }) => {
   const styles = useStyles();
 
   return peers.length > 0 ? (
@@ -71,6 +82,7 @@ export const TorrentDetailsPeers: React.FC<Props> = ({ peers }) => {
             availability={availability}
             rateUp={rate_up}
             rateDown={rate_down}
+            lookupIp={lookupIp}
           />
         ))}
       </tbody>
