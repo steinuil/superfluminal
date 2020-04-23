@@ -1,14 +1,13 @@
 import React from 'react';
 import { createUseStyles } from 'react-jss';
-import { TextSingleLine } from './TextSingleLine';
 import { useId } from '../hooks/UseId';
 import { SelectOption, Select } from './Select';
+import { FieldLabel } from './FieldLabel';
 
 const useStyles = createUseStyles({
   label: {
     display: 'block',
     marginBottom: '8px',
-    fontWeight: 'bold',
   },
 });
 
@@ -17,6 +16,7 @@ interface Props<T> {
   value: T;
   onChange: (value: T) => void;
   options: readonly SelectOption<T>[];
+  modified?: boolean;
 }
 
 export function SelectField<T extends string = string>({
@@ -24,6 +24,7 @@ export function SelectField<T extends string = string>({
   value,
   onChange,
   options,
+  modified,
 }: Props<T>) {
   const styles = useStyles();
 
@@ -32,7 +33,7 @@ export function SelectField<T extends string = string>({
   return (
     <div>
       <label htmlFor={id} className={styles.label}>
-        <TextSingleLine>{label}</TextSingleLine>
+        <FieldLabel modified={modified}>{label}</FieldLabel>
       </label>
       <Select<T> id={id} value={value} onChange={onChange} options={options} />
     </div>

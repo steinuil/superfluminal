@@ -2,13 +2,12 @@ import React from 'react';
 import { createUseStyles } from 'react-jss';
 import { TextInput } from './TextInput';
 import { useId } from '../hooks/UseId';
-import { TextSingleLine } from './TextSingleLine';
+import { FieldLabel } from './FieldLabel';
 
 const useStyles = createUseStyles({
   label: {
     display: 'block',
     marginBottom: '8px',
-    fontWeight: 'bold',
   },
 });
 
@@ -18,6 +17,7 @@ interface Props {
   value: string;
   onChange: (value: string) => void;
   required?: boolean;
+  modified?: boolean;
 }
 
 export const TextField: React.FC<Props> = ({
@@ -26,6 +26,7 @@ export const TextField: React.FC<Props> = ({
   value,
   onChange,
   required,
+  modified,
 }) => {
   const styles = useStyles();
 
@@ -34,7 +35,7 @@ export const TextField: React.FC<Props> = ({
   return (
     <div>
       <label className={styles.label} htmlFor={id}>
-        <TextSingleLine>{label}</TextSingleLine>
+        <FieldLabel modified={modified}>{label}</FieldLabel>
       </label>
       <TextInput
         id={id}

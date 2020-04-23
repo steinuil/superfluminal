@@ -2,7 +2,7 @@ import { default as wsSend } from './socket';
 import { TorrentOptions } from './ui/AddTorrentForm';
 import { makeSynapseConnection } from './SynapseConnection';
 import { SynapseId } from './types/SynapseProtocol';
-import { throttleToNumber } from './ui/ThrottleBitrate';
+import { throttleToNumber } from './hooks/UseThrottle';
 
 const conn = makeSynapseConnection(wsSend);
 

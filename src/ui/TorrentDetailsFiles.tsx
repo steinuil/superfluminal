@@ -4,14 +4,16 @@ import { FileResource } from '../types/SynapseProtocol';
 import { Stack } from '../components/Stack';
 import { makeDirTree } from '../MakeDirTree';
 import { DirTree } from './DirTree';
+import { Button } from '../components/Button';
 
 const useStyles = createUseStyles({});
 
 interface Props {
   files: FileResource[];
+  onValidate: () => void;
 }
 
-export const TorrentDetailsFiles: React.FC<Props> = ({ files }) => {
+export const TorrentDetailsFiles: React.FC<Props> = ({ files, onValidate }) => {
   const styles = useStyles();
 
   const fileTree = useMemo(() => {
@@ -19,7 +21,10 @@ export const TorrentDetailsFiles: React.FC<Props> = ({ files }) => {
   }, [files]);
 
   return (
-    <Stack spacing="4px">
+    <Stack spacing="8px">
+      <Button type="button" onClick={onValidate}>
+        Validate files
+      </Button>
       <DirTree tree={fileTree} />
     </Stack>
   );

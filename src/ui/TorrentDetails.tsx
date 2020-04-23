@@ -25,6 +25,8 @@ import { c } from '../ClassNames';
 import { useToggle } from '../hooks/UseToggle';
 import { DeleteTorrentForm } from './DeleteTorrentForm';
 import ws_send from '../socket';
+import { useThrottle } from '../hooks/UseThrottle';
+import { updateResource } from '../actions/resources';
 
 const useStyles = createUseStyles({
   selectedTab: {
@@ -105,6 +107,44 @@ export const TorrentDetails: React.FC<Props> = ({ torrentId, onClose }) => {
     [torrent, onClose, alsoDeleteFiles]
   );
 
+  const [path, setPath] = useState(torrent.path);
+  const pathModified = path !== torrent.path;
+  const [priority, setPriority] = useState(torrent.priority);
+  const priorityModified = priority !== torrent.priority;
+  const [strategy, setStrategy] = useState(torrent.strategy);
+  const strategyModified = strategy !== torrent.strategy;
+  const [dlThrottle, setDlThrottle, dlThrottleRaw] = useThrottle(
+    torrent.throttle_down
+  );
+  const dlThrottleModified = torrent.throttle_down !== dlThrottleRaw;
+  const [ulThrottle, setUlThrottle, ulThrottleRaw] = useThrottle(
+    torrent.throttle_up
+  );
+  const ulThrottleModified = torrent.throttle_up !== ulThrottleRaw;
+
+  const handleValidateResources = () =>
+    ws_send('VALIDATE_RESOURCES', { ids: [torrentId] });
+
+  const canUpdateSettings =
+    pathModified ||
+    priorityModified ||
+    strategyModified ||
+    dlThrottleModified ||
+    ulThrottleModified;
+
+  const handleUpdateSettings = () => {
+    dispatch(
+      updateResource({
+        id: torrentId,
+        path: pathModified ? path : undefined,
+        priority: priorityModified ? priority : undefined,
+        strategy: strategyModified ? strategy : undefined,
+        throttle_up: ulThrottleModified ? ulThrottleRaw : undefined,
+        throttle_down: dlThrottleModified ? dlThrottleRaw : undefined,
+      })
+    );
+  };
+
   return (
     <Stack spacing="16px" padding="16px">
       <FormHeader title="Torrent info" onClose={onClose} />
@@ -152,19 +192,29 @@ export const TorrentDetails: React.FC<Props> = ({ torrentId, onClose }) => {
       </Columns>
       {selectedTab === 'SETTINGS' ? (
         <TorrentDetailsOptions
-          path={torrent.path}
-          setPath={() => {}}
-          priority={torrent.priority}
-          setPriority={() => {}}
-          downloadStrategy={torrent.strategy}
-          setDownloadStrategy={() => {}}
-          downloadThrottle={{ type: 'GLOBAL' }}
-          uploadThrottle={{ type: 'GLOBAL' }}
-          setDownloadThrottle={() => {}}
-          setUploadThrottle={() => {}}
+          path={path}
+          setPath={setPath}
+          pathModified={pathModified}
+          priority={priority}
+          setPriority={setPriority}
+          priorityModified={priorityModified}
+          downloadStrategy={strategy}
+          setDownloadStrategy={setStrategy}
+          strategyModified={strategyModified}
+          downloadThrottle={dlThrottle}
+          uploadThrottle={ulThrottle}
+          setDownloadThrottle={setDlThrottle}
+          setUploadThrottle={setUlThrottle}
+          downloadThrottleModified={dlThrottleModified}
+          uploadThrottleModified={ulThrottleModified}
+          onSubmit={handleUpdateSettings}
+          submitDisabled={canUpdateSettings}
         />
       ) : selectedTab === 'FILES' ? (
-        <TorrentDetailsFiles files={files} />
+        <TorrentDetailsFiles
+          files={files}
+          onValidate={handleValidateResources}
+        />
       ) : selectedTab === 'TRACKERS' ? (
         <TorrentDetailsTrackers trackers={trackers} />
       ) : (
