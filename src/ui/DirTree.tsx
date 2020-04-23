@@ -14,7 +14,7 @@ const useStyles = createUseStyles({
   },
   li: {
     fontSize: '14px',
-    wordBreak: 'break-all',
+    wordBreak: 'break-word',
     display: 'flex',
     '&:hover': {
       backgroundColor: '#444',

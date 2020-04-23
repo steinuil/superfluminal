@@ -287,6 +287,7 @@ export interface AddPeer extends SynapseMessage<'ADD_PEER'> {
 
 export interface AddTracker extends SynapseMessage<'ADD_TRACKER'> {
   id: SynapseId;
+  uri: string;
 }
 
 export interface ValidateResources

@@ -5,7 +5,7 @@ export interface Bitrate {
   unit: BitrateUnit;
 }
 
-const rates: { [U in BitrateUnit]: number } = {
+export const RATES: { [U in BitrateUnit]: number } = {
   'B/s': Math.pow(1024, 0),
   'KiB/s': Math.pow(1024, 1),
   'MiB/s': Math.pow(1024, 2),
@@ -14,25 +14,25 @@ const rates: { [U in BitrateUnit]: number } = {
 };
 
 export function convertToBitrate(value: number, unit: BitrateUnit) {
-  return value * rates[unit];
+  return value * RATES[unit];
 }
 
 export function convertFromBitrate(value: number, unit: BitrateUnit) {
-  return value / rates[unit];
+  return value / RATES[unit];
 }
 
 export const bitrateToNumber = ({ value, unit }: Bitrate) =>
-  value * rates[unit];
+  value * RATES[unit];
 
 export function convertedRate(bitrate: number): [number, BitrateUnit] {
-  if (bitrate > rates['TiB/s']) {
-    return [bitrate / rates['TiB/s'], 'TiB/s'];
-  } else if (bitrate > rates['GiB/s']) {
-    return [bitrate / rates['GiB/s'], 'GiB/s'];
-  } else if (bitrate > rates['MiB/s']) {
-    return [bitrate / rates['MiB/s'], 'MiB/s'];
-  } else if (bitrate > rates['KiB/s']) {
-    return [bitrate / rates['KiB/s'], 'KiB/s'];
+  if (bitrate > RATES['TiB/s']) {
+    return [bitrate / RATES['TiB/s'], 'TiB/s'];
+  } else if (bitrate > RATES['GiB/s']) {
+    return [bitrate / RATES['GiB/s'], 'GiB/s'];
+  } else if (bitrate > RATES['MiB/s']) {
+    return [bitrate / RATES['MiB/s'], 'MiB/s'];
+  } else if (bitrate > RATES['KiB/s']) {
+    return [bitrate / RATES['KiB/s'], 'KiB/s'];
   } else {
     return [bitrate, 'B/s'];
   }

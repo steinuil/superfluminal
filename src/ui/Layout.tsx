@@ -115,7 +115,11 @@ export const Layout: React.FC<Props> = () => {
           {sidebar.state === 'ADD_TORRENT' ? (
             <AddTorrent onClose={handleClose} />
           ) : sidebar.state === 'TORRENT_INFO' ? (
-            <TorrentDetails torrentId={sidebar.torrent} onClose={handleClose} />
+            <TorrentDetails
+              key={sidebar.torrent}
+              torrentId={sidebar.torrent}
+              onClose={handleClose}
+            />
           ) : null}
         </aside>
       )}
