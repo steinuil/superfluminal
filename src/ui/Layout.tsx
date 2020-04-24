@@ -6,6 +6,7 @@ import { TopBar } from './TopBar';
 import { ConnectionOverlay } from './ConnectionOverlay';
 import { SynapseId } from '../types/SynapseProtocol';
 import { TorrentDetails } from './TorrentDetails';
+import { ServerInfo } from './ServerInfo';
 
 interface StyleProps {
   isSidebarOpen: boolean;
@@ -120,7 +121,9 @@ export const Layout: React.FC<Props> = () => {
               torrentId={sidebar.torrent}
               onClose={handleClose}
             />
-          ) : null}
+          ) : (
+            <ServerInfo onClose={handleClose} />
+          )}
         </aside>
       )}
     </div>

@@ -55,6 +55,7 @@ interface Props {
   throttle: Throttle;
   onChange: (newThrottle: Throttle) => void;
   modified?: boolean;
+  noGlobal?: boolean;
 }
 
 export const ThrottleBitrate: React.FC<Props> = ({
@@ -62,14 +63,17 @@ export const ThrottleBitrate: React.FC<Props> = ({
   throttle,
   onChange,
   modified,
+  noGlobal,
 }) => (
   <Stack spacing="8px">
     <FieldLabel modified={modified}>{title}</FieldLabel>
-    <Radio
-      label="Global"
-      checked={throttle.type === 'GLOBAL'}
-      onChange={() => onChange({ type: 'GLOBAL' })}
-    />
+    {noGlobal || (
+      <Radio
+        label="Global"
+        checked={throttle.type === 'GLOBAL'}
+        onChange={() => onChange({ type: 'GLOBAL' })}
+      />
+    )}
     <Radio
       label="Unlimited"
       checked={throttle.type === 'UNLIMITED'}

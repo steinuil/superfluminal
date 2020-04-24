@@ -113,6 +113,8 @@ export const TorrentDetails: React.FC<Props> = ({ torrentId, onClose }) => {
   const priorityModified = priority !== torrent.priority;
   const [strategy, setStrategy] = useState(torrent.strategy);
   const strategyModified = strategy !== torrent.strategy;
+
+  // Throttle doesn't seem to work right
   const [dlThrottle, setDlThrottle, dlThrottleRaw] = useThrottle(
     torrent.throttle_down
   );
