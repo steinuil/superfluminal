@@ -210,7 +210,7 @@ export const TorrentDetails: React.FC<Props> = ({ torrentId, onClose }) => {
           downloadThrottleModified={dlThrottleModified}
           uploadThrottleModified={ulThrottleModified}
           onSubmit={handleUpdateSettings}
-          submitDisabled={canUpdateSettings}
+          submitDisabled={!canUpdateSettings}
         />
       ) : selectedTab === 'FILES' ? (
         <TorrentDetailsFiles
