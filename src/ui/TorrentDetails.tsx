@@ -7,27 +7,18 @@ import { FiFolder, FiUsers, FiServer, FiSettings } from 'react-icons/fi';
 import { Divider } from '../components/Divider';
 import { Button } from '../components/Button';
 import { FormHeader } from '../components/FormHeader';
-import { TorrentDetailsOptions } from './TorrentDetailsOptions';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { State } from '../types/Store';
-import {
-  SynapseId,
-  TorrentResource,
-  FileResource,
-  TrackerResource,
-  PeerResource,
-} from '../types/SynapseProtocol';
-import selectTorrent, { EXCLUSIVE } from '../actions/selectionOld';
-import { TorrentDetailsFiles } from './TorrentDetailsFiles';
-import { TorrentDetailsTrackers } from './TorrentDetailsTrackers';
-import { TorrentDetailsPeers } from './TorrentDetailsPeers';
+import { SynapseId } from '../types/SynapseProtocol';
 import { c } from '../ClassNames';
 import { useToggle } from '../hooks/UseToggle';
 import { DeleteTorrentForm } from './DeleteTorrentForm';
 import ws_send from '../socket';
-import { useThrottle } from '../hooks/UseThrottle';
-import { updateResource } from '../actions/resources';
 import { selectTorrents } from '../actions/Selection';
+import { TorrentDetailsOptionsController } from './TorrentDetailsOptionsController';
+import { TorrentDetailsFilesController } from './TorrentDetailsFilesController';
+import { TorrentDetailsPeersController } from './TorrentDetailsPeersController';
+import { TorrentDetailsTrackersController } from './TorrentDetailsTrackersController';
 
 const useStyles = createUseStyles({
   selectedTab: {
@@ -42,10 +33,12 @@ interface Props {
 }
 
 interface SelectorProps {
-  torrent: TorrentResource;
-  files: FileResource[];
-  trackers: TrackerResource[];
-  peers: PeerResource[];
+  name: string | null;
+  size: number | null;
+  comment: string;
+  created: string;
+  creator: string;
+  isPrivate: boolean;
 }
 
 export const TorrentDetails: React.FC<Props> = ({ torrentId, onClose }) => {
@@ -60,28 +53,23 @@ export const TorrentDetails: React.FC<Props> = ({ torrentId, onClose }) => {
     };
   }, [torrentId]);
 
-  const { torrent, trackers, files, peers } = useSelector<State, SelectorProps>(
-    (s) => ({
-      torrent: s.torrents[torrentId],
-      files: Object.values(s.files).filter((f) => f.torrent_id === torrentId),
-      trackers: Object.values(s.trackers).filter(
-        (f) => f.torrent_id === torrentId
-      ),
-      peers: Object.values(s.peers).filter((f) => f.torrent_id === torrentId),
-    }),
-    // not very fast
-    (left, right) =>
-      left.torrent === right.torrent &&
-      left.files.every((f) => right.files.includes(f)) &&
-      left.trackers.every((t) => right.trackers.includes(t)) &&
-      left.peers.every((t) => right.peers.includes(t))
-  );
+  const { name, size, comment, created, creator, isPrivate } = useSelector<
+    State,
+    SelectorProps
+  >((s) => {
+    const i = s.torrents.id.indexOf(torrentId);
 
-  if (!torrent) return null;
+    return {
+      name: s.torrents.name[i],
+      size: s.torrents.size[i],
+      comment: s.torrents.comment[i],
+      created: s.torrents.created[i],
+      creator: s.torrents.creator[i],
+      isPrivate: s.torrents.private[i],
+    };
+  }, shallowEqual);
 
-  const torrentDate = useMemo(() => new Date(torrent.created), [
-    torrent.created,
-  ]);
+  const torrentDate = useMemo(() => new Date(created), [created]);
 
   const [selectedTab, setSelectedTab] = useState<
     'SETTINGS' | 'FILES' | 'PEERS' | 'TRACKERS'
@@ -101,63 +89,23 @@ export const TorrentDetails: React.FC<Props> = ({ torrentId, onClose }) => {
       if (!shouldDelete) return;
       onClose();
       ws_send('REMOVE_RESOURCE', {
-        id: torrent.id,
+        id: torrentId,
         artifacts: alsoDeleteFiles,
       });
     },
-    [torrent, onClose, alsoDeleteFiles]
+    [torrentId, onClose, alsoDeleteFiles]
   );
-
-  const [path, setPath] = useState(torrent.path);
-  const pathModified = path !== torrent.path;
-  const [priority, setPriority] = useState(torrent.priority);
-  const priorityModified = priority !== torrent.priority;
-  const [strategy, setStrategy] = useState(torrent.strategy);
-  const strategyModified = strategy !== torrent.strategy;
-
-  // Throttle doesn't seem to work right
-  const [dlThrottle, setDlThrottle, dlThrottleRaw] = useThrottle(
-    torrent.throttle_down
-  );
-  const dlThrottleModified = torrent.throttle_down !== dlThrottleRaw;
-  const [ulThrottle, setUlThrottle, ulThrottleRaw] = useThrottle(
-    torrent.throttle_up
-  );
-  const ulThrottleModified = torrent.throttle_up !== ulThrottleRaw;
-
-  const handleValidateResources = () =>
-    ws_send('VALIDATE_RESOURCES', { ids: [torrentId] });
-
-  const canUpdateSettings =
-    pathModified ||
-    priorityModified ||
-    strategyModified ||
-    dlThrottleModified ||
-    ulThrottleModified;
-
-  const handleUpdateSettings = () => {
-    dispatch(
-      updateResource({
-        id: torrentId,
-        path: pathModified ? path : undefined,
-        priority: priorityModified ? priority : undefined,
-        strategy: strategyModified ? strategy : undefined,
-        throttle_up: ulThrottleModified ? ulThrottleRaw : undefined,
-        throttle_down: dlThrottleModified ? dlThrottleRaw : undefined,
-      })
-    );
-  };
 
   return (
     <Stack spacing="16px" padding="16px">
       <FormHeader title="Torrent info" onClose={onClose} />
       <TorrentInfo
-        name={torrent.name}
-        size={torrent.size}
-        isPrivate={torrent.private}
-        comment={torrent.comment}
+        name={name}
+        size={size}
+        isPrivate={isPrivate}
+        comment={comment}
         creationDate={torrentDate}
-        createdBy={torrent.creator}
+        createdBy={creator}
       />
       <Button type="button" onClick={openModal}>
         Delete torrent
@@ -194,34 +142,13 @@ export const TorrentDetails: React.FC<Props> = ({ torrentId, onClose }) => {
         </Button>
       </Columns>
       {selectedTab === 'SETTINGS' ? (
-        <TorrentDetailsOptions
-          path={path}
-          setPath={setPath}
-          pathModified={pathModified}
-          priority={priority}
-          setPriority={setPriority}
-          priorityModified={priorityModified}
-          downloadStrategy={strategy}
-          setDownloadStrategy={setStrategy}
-          strategyModified={strategyModified}
-          downloadThrottle={dlThrottle}
-          uploadThrottle={ulThrottle}
-          setDownloadThrottle={setDlThrottle}
-          setUploadThrottle={setUlThrottle}
-          downloadThrottleModified={dlThrottleModified}
-          uploadThrottleModified={ulThrottleModified}
-          onSubmit={handleUpdateSettings}
-          submitDisabled={!canUpdateSettings}
-        />
+        <TorrentDetailsOptionsController id={torrentId} />
       ) : selectedTab === 'FILES' ? (
-        <TorrentDetailsFiles
-          files={files}
-          onValidate={handleValidateResources}
-        />
+        <TorrentDetailsFilesController id={torrentId} />
       ) : selectedTab === 'TRACKERS' ? (
-        <TorrentDetailsTrackers trackers={trackers} />
+        <TorrentDetailsTrackersController id={torrentId} />
       ) : (
-        <TorrentDetailsPeers peers={peers} />
+        <TorrentDetailsPeersController id={torrentId} />
       )}
       {isDeleteModalOpen && (
         <DeleteTorrentForm

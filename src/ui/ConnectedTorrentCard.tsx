@@ -1,5 +1,9 @@
 import React, { useCallback, CSSProperties } from 'react';
-import { TorrentResource, SynapseId } from '../types/SynapseProtocol';
+import {
+  TorrentResource,
+  SynapseId,
+  TorrentStatus,
+} from '../types/SynapseProtocol';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { State } from '../types/Store';
 // import selectTorrent, { EXCLUSIVE } from '../actions/selectionOld';
@@ -21,7 +25,15 @@ interface Props {
 }
 
 interface Selected {
-  torrent: TorrentResource;
+  name: string | null;
+  status: TorrentStatus;
+  size: number | null;
+  transferredUp: number;
+  transferredDown: number;
+  rateUp: number;
+  rateDown: number;
+  progress: number;
+  availability: number;
   selected: boolean;
 }
 
@@ -31,13 +43,33 @@ export const ConnectedTorrentCard: React.FC<Props> = ({
   odd,
   onSelect,
 }) => {
-  const { torrent, selected } = useSelector<State, Selected>(
-    (s) => ({
-      torrent: s.torrents[id],
+  const {
+    name,
+    status,
+    size,
+    transferredUp,
+    transferredDown,
+    progress,
+    rateUp,
+    rateDown,
+    availability,
+    selected,
+  } = useSelector<State, Selected>((s) => {
+    const i = s.torrents.id.indexOf(id);
+
+    return {
       selected: s.selection.has(id),
-    }),
-    shallowEqual
-  );
+      name: s.torrents.name[i],
+      status: s.torrents.status[i],
+      size: s.torrents.size[i],
+      transferredUp: s.torrents.transferred_up[i],
+      transferredDown: s.torrents.transferred_down[i],
+      progress: s.torrents.progress[i],
+      rateUp: s.torrents.rate_up[i],
+      rateDown: s.torrents.rate_down[i],
+      availability: s.torrents.availability[i],
+    };
+  }, shallowEqual);
 
   const dispatch = useDispatch();
 
@@ -46,28 +78,20 @@ export const ConnectedTorrentCard: React.FC<Props> = ({
   }, [id, dispatch]);
 
   const handleTogglePaused = useCallback(() => {
-    pause(
-      torrent.status === 'paused' ? 'RESUME_TORRENT' : 'PAUSE_TORRENT',
-      id
-    ).then((msg) => {
-      console.log('response', id, msg);
-    });
-    // ws_send(torrent.status === 'paused' ? 'RESUME_TORRENT' : 'PAUSE_TORRENT', {
-    //   id,
-    // });
-  }, [torrent.status, id]);
+    pause(status === 'paused' ? 'RESUME_TORRENT' : 'PAUSE_TORRENT', id);
+  }, [status, id]);
 
   return (
     <TorrentCard
-      name={torrent.name}
-      status={torrent.status}
-      size={torrent.size}
-      transferredUp={torrent.transferred_up}
-      transferredDown={torrent.transferred_down}
-      progress={torrent.progress}
-      rateUp={torrent.rate_up}
-      rateDown={torrent.rate_down}
-      availability={torrent.availability}
+      name={name}
+      status={status}
+      size={size}
+      transferredUp={transferredUp}
+      transferredDown={transferredDown}
+      progress={progress}
+      rateUp={rateUp}
+      rateDown={rateDown}
+      availability={availability}
       selected={selected}
       onSelect={handleSelect}
       style={style}

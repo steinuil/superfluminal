@@ -9,7 +9,7 @@ import { Definition } from '../components/Definition';
 import { fmtSizeBin } from '../Units';
 import { TextSingleLine } from '../components/TextSingleLine';
 import { TorrentInfo } from './TorrentInfo';
-import { LongText } from './LongText';
+import { LongText } from '../components/LongText';
 
 interface MagnetInfoProps {
   magnet: string;

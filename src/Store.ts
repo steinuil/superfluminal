@@ -8,11 +8,9 @@ import { selection } from './reducers/Selection';
 import subscribe from './reducers/subscribe';
 import filter_subscribe from './reducers/filter_subscribe';
 import server from './reducers/server';
-import torrents from './reducers/torrents';
-import files from './reducers/files';
-import peers from './reducers/peers';
-import trackers from './reducers/trackers';
+import { resourceReducer } from './reducers/Resource';
 import { State } from './types/Store';
+import { torrentReducer } from './reducers/TorrentReducer';
 
 export const history = createBrowserHistory();
 
@@ -23,13 +21,11 @@ const reducer = (history: History) =>
     selection: selection,
     subscribe: subscribe,
     filter_subscribe: filter_subscribe,
-    // resources: combineReducers<State['resources']>({
     server: server,
-    torrents: torrents,
-    files: files,
-    peers: peers,
-    trackers: trackers,
-    // }),
+    torrents: torrentReducer,
+    files: resourceReducer('file'),
+    peers: resourceReducer('peer'),
+    trackers: resourceReducer('tracker'),
   });
 
 export const store = createStore(

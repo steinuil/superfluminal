@@ -3,41 +3,25 @@ import { TorrentList } from './TorrentList';
 import { SynapseId } from '../types/SynapseProtocol';
 import { useSelector } from 'react-redux';
 import { State } from '../types/Store';
-import {
-  createSelectorCreator,
-  defaultMemoize,
-  createSelector,
-} from 'reselect';
+import { createSelector } from 'reselect';
 
 interface Props {
   className?: string;
   onSelectTorrent: (id: SynapseId) => void;
 }
 
-const createArraySelector = createSelectorCreator(
-  defaultMemoize,
-  (curr, prev) => {
-    if (!Array.isArray(curr) || !Array.isArray(prev)) return curr === prev;
-    if (curr.length !== prev.length) return false;
-    for (let i = 0; i < curr.length; i += 1) {
-      if (curr[i] !== prev[i]) return false;
-    }
-    return true;
-  }
-);
-
-const torrentIdsSelector = createSelector(
-  (store: State) => store.torrents,
-  (torrentMap) => {
-    const ids: SynapseId[] = [];
+const memoizedTorrentIdsSelector = createSelector(
+  (store: State) => store.torrents.id,
+  (store: State) => store.torrents.name,
+  (store: State) => store.torrents.length,
+  (ids, names, count) => {
     const namesById: { [id: string]: string | null } = {};
 
-    Object.values(torrentMap).forEach(({ id, name }) => {
-      ids.push(id);
-      namesById[id] = name;
-    });
+    for (let i = 0; i < count; i += 1) {
+      namesById[ids[i]] = names[i];
+    }
 
-    return ids.sort((aId, bId) => {
+    return ids.slice().sort((aId, bId) => {
       const aName = namesById[aId];
       const bName = namesById[bId];
       if (aName === null && bName === null) return 0;
@@ -47,11 +31,6 @@ const torrentIdsSelector = createSelector(
       return aName.localeCompare(bName);
     });
   }
-);
-
-const memoizedTorrentIdsSelector = createArraySelector(
-  torrentIdsSelector,
-  (t) => t
 );
 
 export const ConnectedTorrentTable: React.FC<Props> = ({

@@ -8,13 +8,16 @@ import {
   FileResource,
   PeerResource,
   TrackerResource,
+  PartialSynapseResource,
 } from './SynapseProtocol';
 import { RouterState } from 'connected-react-router';
 import { Action } from 'redux';
 import Immutable from 'immutable';
 
 // "struct of arrays"
-type SOA<T extends object> = { [K in keyof T]: T[K][] };
+export type SOA<T extends object> = { [K in keyof T]: T[K][] } & {
+  length: number;
+};
 
 interface NotConnectedState {
   status: 'NOT_CONNECTED';
@@ -86,7 +89,7 @@ export interface State {
   }>;
   // resources: {
   server: ServerResource;
-  torrents: ResourceMap<TorrentResource>;
+  torrents: SOA<TorrentResource>;
   files: ResourceMap<FileResource>;
   peers: ResourceMap<PeerResource>;
   trackers: ResourceMap<TrackerResource>;
@@ -101,4 +104,16 @@ export interface ResourcesRemovedAction extends Action<'RESOURCES_REMOVED'> {
   ids: SynapseId[];
 }
 
-export type StoreAction = SelectionAction | ResourcesRemovedAction;
+export interface UpdateAction extends Action<'UPDATE_RESOURCES'> {
+  resources: PartialSynapseResource[];
+}
+
+export interface SocketUpdateAction extends Action<'SOCKET_UPDATE'> {
+  state: any;
+}
+
+export type StoreAction =
+  | SelectionAction
+  | ResourcesRemovedAction
+  | UpdateAction
+  | SocketUpdateAction;

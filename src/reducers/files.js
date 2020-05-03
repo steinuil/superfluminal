@@ -1,3 +1,3 @@
-import reducer from './resource';
-const files = reducer("file");
+import { resourceReducer } from './Resource';
+const files = resourceReducer('file');
 export default files;

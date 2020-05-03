@@ -31,6 +31,8 @@ interface ResourceBase<T extends ResourceType> {
   readonly type: T;
 }
 
+export type Priority = 1 | 2 | 3 | 4 | 5;
+
 export interface ServerResource extends ResourceBase<'server'> {
   readonly download_token: string;
   readonly rate_up: number;
@@ -69,7 +71,7 @@ export interface TorrentResource extends ResourceBase<'torrent'> {
   readonly error: string | null;
   readonly size: number | null;
   readonly progress: number;
-  priority: 1 | 2 | 3 | 4 | 5;
+  priority: Priority;
   readonly availability: number;
   strategy: TorrentStrategy;
   readonly rate_up: number;
@@ -85,13 +87,14 @@ export interface TorrentResource extends ResourceBase<'torrent'> {
   readonly piece_size: number;
   readonly piece_field: string;
   readonly files: number;
+  readonly user_data: any;
 }
 
 export interface FileResource extends ResourceBase<'file'> {
   readonly torrent_id: SynapseId;
   readonly path: string;
   readonly progress: number;
-  priority: 1 | 2 | 3 | 4 | 5;
+  priority: Priority;
   readonly availability: number;
   readonly size: number;
 }
@@ -118,6 +121,12 @@ export type SynapseResource =
   | FileResource
   | PeerResource
   | TrackerResource;
+
+// prettier-ignore
+export type PartialResource<R extends ResourceBase<any>> =
+  Partial<R> & Pick<R, 'id' | 'type'>;
+
+export type PartialSynapseResource = PartialResource<SynapseResource>;
 
 // prettier-ignore
 type IfEquals<X, Y, IfTrue, IfFalse> =
@@ -156,7 +165,7 @@ export interface SynapseMessage<T extends string> {
 export interface UpdateResources {
   type: 'UPDATE_RESOURCES';
   serial: SynapseSerial | null;
-  resources: SynapseResource[];
+  resources: PartialSynapseResource[];
 }
 
 export interface ResourcesExtant {

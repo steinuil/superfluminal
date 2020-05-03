@@ -1,3 +1,3 @@
-import reducer from './resource';
-const trackers = reducer("tracker");
+import { resourceReducer } from './Resource';
+const trackers = resourceReducer('tracker');
 export default trackers;

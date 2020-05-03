@@ -1,7 +1,7 @@
 import React from 'react';
 import { TextSingleLine } from './TextSingleLine';
 import { Stack } from './Stack';
-import { LongText } from '../ui/LongText';
+import { LongText } from './LongText';
 
 interface Props {
   label: string;
