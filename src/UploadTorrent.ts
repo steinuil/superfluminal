@@ -1,6 +1,6 @@
 import { default as wsSend } from './socket';
 import { TorrentOptions } from './ui/AddTorrentForm';
-import { makeSynapseConnection } from './SynapseConnection';
+import { makeSynapseConnection, synapseExpect } from './SynapseConnection';
 import { SynapseId } from './types/SynapseProtocol';
 import { throttleToNumber } from './hooks/UseThrottle';
 
@@ -15,15 +15,22 @@ export const uploadMagnet = async (
     options.downloadThrottle.type !== 'GLOBAL' ||
     options.uploadThrottle.type !== 'GLOBAL';
 
-  const extant = await conn.send('UPLOAD_MAGNET', {
-    uri: magnet,
-    start: options.startImmediately && !shouldCustomize,
-    path: options.path || undefined,
-  });
+  const extant = synapseExpect(
+    'RESOURCES_EXTANT',
+    await conn.send('UPLOAD_MAGNET', {
+      uri: magnet,
+      start: options.startImmediately && !shouldCustomize,
+      path: options.path || undefined,
+    })
+  );
 
-  if (extant.type !== 'RESOURCES_EXTANT') {
-    throw new Error(`expected RESOURCES_EXTANT: ${JSON.stringify(extant)}`);
-  }
+  // if (isSynapseError(extant)) {
+  //   throw new SynapseError(extant);
+  // }
+
+  // if (extant.type !== 'RESOURCES_EXTANT') {
+  //   throw new SynapseUnexpected('RESOURCES_EXTANT', extant);
+  // }
 
   const [id] = extant.ids;
 
@@ -62,11 +69,18 @@ export const uploadTorrentFile = async (
     import: options.shouldImport,
   });
 
-  const offer = await uploadResponses.next().value;
+  const offer = synapseExpect(
+    'TRANSFER_OFFER',
+    await uploadResponses.next().value
+  );
 
-  if (offer.type !== 'TRANSFER_OFFER') {
-    throw new Error(`expected TRANSFER_OFFER: ${JSON.stringify(offer)}`);
-  }
+  // if (isSynapseError(offer)) {
+  //   throw new SynapseError(offer);
+  // }
+
+  // if (offer.type !== 'TRANSFER_OFFER') {
+  //   throw new SynapseUnexpected('TRANSFER_OFFER', offer);
+  // }
 
   const a = document.createElement('a');
   a.href = socket.uri;
@@ -79,15 +93,18 @@ export const uploadTorrentFile = async (
     },
   });
 
-  const extant = await uploadResponses.next().value;
+  const extant = synapseExpect(
+    'RESOURCES_EXTANT',
+    await uploadResponses.next().value
+  );
 
-  if (extant.type === 'INVALID_REQUEST') {
-    throw new Error(extant.reason);
-  }
+  // if (extant.type === 'INVALID_REQUEST') {
+  //   throw new Error(extant.reason);
+  // }
 
-  if (extant.type !== 'RESOURCES_EXTANT') {
-    throw new Error(`expected RESOURCES_EXTANT: ${JSON.stringify(extant)}`);
-  }
+  // if (extant.type !== 'RESOURCES_EXTANT') {
+  //   throw new Error(`expected RESOURCES_EXTANT: ${JSON.stringify(extant)}`);
+  // }
 
   const [id] = extant.ids;
 

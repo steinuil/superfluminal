@@ -4,7 +4,7 @@ import { PeerResource } from '../types/SynapseProtocol';
 import { fmtProgress, fmtBitrateBin } from '../Units';
 import { FiArrowUp, FiArrowDown } from 'react-icons/fi';
 import { TextSingleLine } from '../components/TextSingleLine';
-import { countryCodeToEmoji } from '../GetCountryByIp';
+// import { countryCodeToEmoji } from '../GetCountryByIp';
 
 const useStyles = createUseStyles({
   table: {

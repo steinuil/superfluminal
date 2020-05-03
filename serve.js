@@ -31,7 +31,7 @@ app.get('*', function(req, res) {
   });
 });
 
-const port = process.env.MANAGER_PORT || 3000;
+const port = process.env.MANAGER_PORT || 3030;
 
 app.listen(port, '0.0.0.0', function(err) {
   if (err) {

@@ -2,9 +2,16 @@ import React, { useCallback, CSSProperties } from 'react';
 import { TorrentResource, SynapseId } from '../types/SynapseProtocol';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { State } from '../types/Store';
-import selectTorrent, { EXCLUSIVE } from '../actions/selection';
+// import selectTorrent, { EXCLUSIVE } from '../actions/selectionOld';
 import { TorrentCard } from './TorrentCard';
 import ws_send from '../socket';
+import { makeSynapseConnection } from '../SynapseConnection';
+import { selectTorrents } from '../actions/Selection';
+
+const conn = makeSynapseConnection(ws_send);
+
+const pause = (action: 'RESUME_TORRENT' | 'PAUSE_TORRENT', id: SynapseId) =>
+  conn.send(action, { id });
 
 interface Props {
   id: SynapseId;
@@ -27,7 +34,7 @@ export const ConnectedTorrentCard: React.FC<Props> = ({
   const { torrent, selected } = useSelector<State, Selected>(
     (s) => ({
       torrent: s.torrents[id],
-      selected: s.selection.includes(id),
+      selected: s.selection.has(id),
     }),
     shallowEqual
   );
@@ -35,13 +42,19 @@ export const ConnectedTorrentCard: React.FC<Props> = ({
   const dispatch = useDispatch();
 
   const handleSelect = useCallback(() => {
-    dispatch(selectTorrent([id], EXCLUSIVE));
+    dispatch(selectTorrents([id]));
   }, [id, dispatch]);
 
   const handleTogglePaused = useCallback(() => {
-    ws_send(torrent.status === 'paused' ? 'RESUME_TORRENT' : 'PAUSE_TORRENT', {
-      id,
+    pause(
+      torrent.status === 'paused' ? 'RESUME_TORRENT' : 'PAUSE_TORRENT',
+      id
+    ).then((msg) => {
+      console.log('response', id, msg);
     });
+    // ws_send(torrent.status === 'paused' ? 'RESUME_TORRENT' : 'PAUSE_TORRENT', {
+    //   id,
+    // });
   }, [torrent.status, id]);
 
   return (

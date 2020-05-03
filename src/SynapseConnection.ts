@@ -2,6 +2,7 @@ import {
   SynapseServerMessage,
   SynapseClientMessage,
   SynapseSerial,
+  SynapseErrorMessage,
 } from './types/SynapseProtocol';
 
 type Callbacks = { [serial: number]: (msg: SynapseServerMessage) => void };
@@ -143,9 +144,69 @@ export const makeSynapseConnection = (
         };
       },
 
-      [Symbol.iterator]: function() {
+      [Symbol.iterator]: function () {
         return this;
       },
     };
   },
 });
+
+export const isSynapseError = (
+  msg: SynapseServerMessage
+): msg is SynapseErrorMessage =>
+  [
+    'UNKNOWN_RESOURCE',
+    'INVALID_RESOURCE',
+    'INVALID_MESSAGE',
+    'INVALID_SCHEMA',
+    'INVALID_REQUEST',
+    'TRANSFER_FAILED',
+    'PERMISSION_DENIED',
+    'SERVER_ERROR',
+  ].includes(msg.type);
+
+export class SynapseError extends Error {
+  type: SynapseErrorMessage['type'];
+  serial: SynapseSerial;
+  reason: string;
+
+  constructor({ type, reason, serial }: SynapseErrorMessage, ...params: any[]) {
+    super(...params);
+
+    this.name = 'SynapseError';
+    this.message = `${type}: ${reason}`;
+    this.type = type;
+    this.reason = reason;
+    this.serial = serial;
+  }
+}
+
+export class SynapseUnexpected extends Error {
+  constructor(
+    public expected: SynapseServerMessage['type'],
+    public got: SynapseServerMessage,
+    ...params: any[]
+  ) {
+    super(...params);
+
+    this.name = 'SynapseUnexpected';
+    this.message = `Expected ${expected}: ${JSON.stringify(got)}`;
+  }
+}
+
+export function synapseExpect<
+  T extends Exclude<SynapseServerMessage['type'], SynapseErrorMessage['type']>
+>(
+  type: T,
+  msg: SynapseServerMessage
+): Extract<SynapseServerMessage, { type: T }> {
+  if (isSynapseError(msg)) {
+    throw new SynapseError(msg);
+  }
+
+  if (msg.type !== type) {
+    throw new SynapseUnexpected(type, msg);
+  }
+
+  return msg as any;
+}

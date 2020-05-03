@@ -154,18 +154,25 @@ export const TorrentCard: React.FC<Props> = ({
       <Stack spacing="8px" className={styles.card}>
         <TextSingleLine className={styles.title}>{name}</TextSingleLine>
         <TextSingleLine fontSize="13px">{info}</TextSingleLine>
-        <ProgressBar availability={availability} progress={progress} />
+        <ProgressBar
+          availability={availability}
+          progress={progress}
+          status={status}
+        />
       </Stack>
       <Stack spacing="8px" className={styles.buttons}>
-        {React.createElement(isPaused ? FiPlayCircle : FiPauseCircle, {
-          className: styles.button,
-          size: '24px',
-          strokeWidth: '1.5px',
-          tabIndex: 0,
-          role: 'button',
-          onClick: stopPropagation(onTogglePaused),
-          onKeyDown: onKeyboardSelect(stopPropagation(onTogglePaused)),
-        })}
+        <div
+          tabIndex={0}
+          role="button"
+          onClick={stopPropagation(onTogglePaused)}
+          onKeyDown={onKeyboardSelect(stopPropagation(onTogglePaused))}
+        >
+          {React.createElement(isPaused ? FiPlayCircle : FiPauseCircle, {
+            className: styles.button,
+            size: '24px',
+            strokeWidth: '1.5px',
+          })}
+        </div>
         <FiInfo
           className={styles.button}
           size="24px"

@@ -17,7 +17,7 @@ import {
   TrackerResource,
   PeerResource,
 } from '../types/SynapseProtocol';
-import selectTorrent, { EXCLUSIVE } from '../actions/selection';
+import selectTorrent, { EXCLUSIVE } from '../actions/selectionOld';
 import { TorrentDetailsFiles } from './TorrentDetailsFiles';
 import { TorrentDetailsTrackers } from './TorrentDetailsTrackers';
 import { TorrentDetailsPeers } from './TorrentDetailsPeers';
@@ -27,6 +27,7 @@ import { DeleteTorrentForm } from './DeleteTorrentForm';
 import ws_send from '../socket';
 import { useThrottle } from '../hooks/UseThrottle';
 import { updateResource } from '../actions/resources';
+import { selectTorrents } from '../actions/Selection';
 
 const useStyles = createUseStyles({
   selectedTab: {
@@ -53,9 +54,9 @@ export const TorrentDetails: React.FC<Props> = ({ torrentId, onClose }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(selectTorrent([torrentId], EXCLUSIVE));
+    dispatch(selectTorrents([torrentId]));
     return () => {
-      dispatch(selectTorrent([], EXCLUSIVE, false));
+      dispatch(selectTorrents([]));
     };
   }, [torrentId]);
 

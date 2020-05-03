@@ -9,20 +9,13 @@ interface RowProps {
   style: CSSProperties;
 }
 
-type SortColumn = 'name' | 'up' | 'down' | 'ul' | 'dl' | 'ratio' | 'progress';
-
 interface Props {
   torrents: SynapseId[];
-  allSelected: boolean;
-  onSelectAll: () => void;
-  sortColumn: SortColumn;
-  sortMode: 'ASC' | 'DESC';
-  onSelectColumn: (col: SortColumn) => void;
   className?: string;
   onSelectTorrent: (id: SynapseId) => void;
 }
 
-export const TorrentTable: React.FC<Props> = ({
+export const TorrentList: React.FC<Props> = ({
   torrents,
   className,
   onSelectTorrent,

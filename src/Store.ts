@@ -4,7 +4,7 @@ import { createStore, applyMiddleware, combineReducers, Reducer } from 'redux';
 import { routerMiddleware, connectRouter } from 'connected-react-router';
 
 import socket from './reducers/socket';
-import selection from './reducers/selection';
+import { selection } from './reducers/Selection';
 import subscribe from './reducers/subscribe';
 import filter_subscribe from './reducers/filter_subscribe';
 import server from './reducers/server';

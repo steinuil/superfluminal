@@ -1,10 +1,12 @@
 import React from 'react';
 import { createUseStyles } from 'react-jss';
 import { toFixed } from '../Units';
+import { TorrentStatus } from '../types/SynapseProtocol';
 
 interface StyleProps {
   done: string;
   availability: string;
+  status: TorrentStatus;
 }
 
 const useStyles = createUseStyles({
@@ -23,7 +25,8 @@ const useStyles = createUseStyles({
     width: (props: StyleProps) => `${props.availability}%`,
   },
   progress: {
-    backgroundColor: '#40c9db',
+    backgroundColor: (props: StyleProps) =>
+      props.status === 'paused' ? '#797979' : '#40c9db',
     position: 'absolute',
     left: 0,
     top: 0,
@@ -52,12 +55,18 @@ const useStyles = createUseStyles({
 interface Props {
   availability: number;
   progress: number;
+  status: TorrentStatus;
 }
 
-export const ProgressBar: React.FC<Props> = ({ availability, progress }) => {
+export const ProgressBar: React.FC<Props> = ({
+  availability,
+  progress,
+  status,
+}) => {
   const styles = useStyles({
     availability: toFixed(availability * 100, 2),
     done: toFixed(progress * 100, 2),
+    status,
   });
 
   return (

@@ -202,6 +202,16 @@ export type TransferFailedError = SynapseError<'TRANSFER_FAILED'>;
 export type PermissionDeniedError = SynapseError<'PERMISSION_DENIED'>;
 export type ServerError = SynapseError<'SERVER_ERROR'>;
 
+export type SynapseErrorMessage =
+  | UnknownResourceError
+  | InvalidResourceError
+  | InvalidMessageError
+  | InvalidSchemaError
+  | InvalidRequestError
+  | TransferFailedError
+  | PermissionDeniedError
+  | ServerError;
+
 export type SynapseServerMessage =
   | UpdateResources
   | ResourcesExtant

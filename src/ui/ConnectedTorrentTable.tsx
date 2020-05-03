@@ -1,112 +1,68 @@
-import React, { useState, useCallback, useRef } from 'react';
-import { TorrentTable } from './TorrentTable';
-import { TorrentResource, SynapseId } from '../types/SynapseProtocol';
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
+import { TorrentList } from './TorrentList';
+import { SynapseId } from '../types/SynapseProtocol';
+import { useSelector } from 'react-redux';
 import { State } from '../types/Store';
-import selectTorrent, { EXCLUSIVE } from '../actions/selection';
-
-interface Selected {
-  torrentIds: SynapseId[];
-  torrents: TorrentResource[];
-  selection: SynapseId[];
-}
-
-type SortColumn = 'name' | 'up' | 'down' | 'ul' | 'dl' | 'ratio' | 'progress';
-
-type Comparators = {
-  [k in SortColumn]: (a: TorrentResource, b: TorrentResource) => number;
-};
-
-const COMPARATORS: Comparators = {
-  name: (a, b) => {
-    if (a.name === null && b.name === null) return 0;
-    if (a.name === null) return -1;
-    if (b.name === null) return 1;
-    return b.name.localeCompare(a.name);
-  },
-  up: (a, b) => a.rate_up - b.rate_up,
-  down: (a, b) => a.rate_down - b.rate_down,
-  ul: (a, b) => a.transferred_up - b.transferred_up,
-  dl: (a, b) => a.transferred_down - b.transferred_down,
-  ratio: (a, b) => {
-    const ratioA = a.transferred_up / a.transferred_down;
-    const ratioB = b.transferred_up / b.transferred_down;
-    if (!isFinite(ratioA) && !isFinite(ratioB)) return 0;
-    if (!isFinite(ratioA)) return -1;
-    if (!isFinite(ratioB)) return 1;
-    return ratioA - ratioB;
-  },
-  progress: (a, b) => a.progress - b.progress,
-};
+import {
+  createSelectorCreator,
+  defaultMemoize,
+  createSelector,
+} from 'reselect';
 
 interface Props {
   className?: string;
   onSelectTorrent: (id: SynapseId) => void;
 }
 
+const createArraySelector = createSelectorCreator(
+  defaultMemoize,
+  (curr, prev) => {
+    if (!Array.isArray(curr) || !Array.isArray(prev)) return curr === prev;
+    if (curr.length !== prev.length) return false;
+    for (let i = 0; i < curr.length; i += 1) {
+      if (curr[i] !== prev[i]) return false;
+    }
+    return true;
+  }
+);
+
+const torrentIdsSelector = createSelector(
+  (store: State) => store.torrents,
+  (torrentMap) => {
+    const ids: SynapseId[] = [];
+    const namesById: { [id: string]: string | null } = {};
+
+    Object.values(torrentMap).forEach(({ id, name }) => {
+      ids.push(id);
+      namesById[id] = name;
+    });
+
+    return ids.sort((aId, bId) => {
+      const aName = namesById[aId];
+      const bName = namesById[bId];
+      if (aName === null && bName === null) return 0;
+      // Sort null lower
+      if (aName === null) return 1;
+      if (bName === null) return -1;
+      return aName.localeCompare(bName);
+    });
+  }
+);
+
+const memoizedTorrentIdsSelector = createArraySelector(
+  torrentIdsSelector,
+  (t) => t
+);
+
 export const ConnectedTorrentTable: React.FC<Props> = ({
   className,
   onSelectTorrent,
 }) => {
-  const { torrentIds, torrents, selection } = useSelector<State, Selected>(
-    (s) => ({
-      torrentIds: Object.keys(s.torrents) as SynapseId[],
-      torrents: Object.values(s.torrents),
-      selection: s.selection,
-    }),
-    (left, right) =>
-      left.torrents.every((t) => right.torrents.includes(t)) &&
-      left.selection === right.selection
-  );
-
-  const dispatch = useDispatch();
-
-  const [sortColumn, setSortColumn] = useState<SortColumn>('name');
-  const [sortMode, setSortMode] = useState<'ASC' | 'DESC'>('DESC');
-  const handleSelectColumn = useCallback(
-    (newColumn: SortColumn) => {
-      if (sortColumn === newColumn) {
-        setSortMode((prev) => (prev === 'ASC' ? 'DESC' : 'ASC'));
-      } else {
-        setSortMode('DESC');
-        setSortColumn(newColumn);
-      }
-    },
-    [sortColumn]
-  );
-
-  const allSelected = selection.length === torrentIds.length;
-  const handleSelectAll = useCallback(() => {
-    if (allSelected) {
-      dispatch(selectTorrent([], EXCLUSIVE));
-    } else {
-      dispatch(selectTorrent(torrentIds, EXCLUSIVE));
-    }
-  }, [allSelected, dispatch]);
-
-  const sortedTorrents = torrents
-    .sort(
-      (a, b) => COMPARATORS[sortColumn](a, b) * (sortMode === 'ASC' ? 1 : -1)
-    )
-    .map(({ id }) => id);
-
-  const sameSortedTorrents = useRef(sortedTorrents);
-
-  if (
-    sortedTorrents !== sameSortedTorrents.current &&
-    !sortedTorrents.every((e, i) => sameSortedTorrents.current[i] === e)
-  ) {
-    sameSortedTorrents.current = sortedTorrents;
-  }
+  const torrents = useSelector(memoizedTorrentIdsSelector);
 
   return (
-    <TorrentTable
-      torrents={sameSortedTorrents.current}
-      allSelected={allSelected}
-      onSelectAll={handleSelectAll}
-      sortColumn={sortColumn}
-      sortMode={sortMode}
-      onSelectColumn={handleSelectColumn}
+    <TorrentList
+      torrents={torrents}
       className={className}
       onSelectTorrent={onSelectTorrent}
     />
