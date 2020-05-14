@@ -1,4 +1,4 @@
-import React, { useMemo, memo } from 'react';
+import React, { useMemo } from 'react';
 import { TorrentStatus } from '../types/SynapseProtocol';
 import { formatAmount, formatBitrate } from '../Bitrate';
 import { createUseStyles } from 'react-jss';
@@ -9,7 +9,7 @@ import {
   fmtBitrateBin,
   fmtRatio,
 } from '../Units';
-import { FiPauseCircle, FiPlayCircle, FiInfo, FiPlay } from 'react-icons/fi';
+import { FiPauseCircle, FiPlayCircle, FiInfo } from 'react-icons/fi';
 import { stopPropagation, onKeyboardSelect } from '../EventHelpers';
 import { ProgressBar } from './ProgressBar';
 import { Columns } from '../components/Columns';

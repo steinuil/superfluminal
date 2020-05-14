@@ -15,9 +15,7 @@ import { Action } from 'redux';
 import Immutable from 'immutable';
 
 // "struct of arrays"
-export type SOA<T extends object> = { [K in keyof T]: T[K][] } & {
-  length: number;
-};
+export type SOA<T extends object> = { [K in keyof T]: T[K][] };
 
 interface NotConnectedState {
   status: 'NOT_CONNECTED';

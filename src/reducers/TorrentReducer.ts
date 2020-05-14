@@ -5,7 +5,7 @@ import { SOA, StoreAction } from '../types/Store';
 import { exactEntries, exactKeys } from '../Exact';
 import { SOCKET_STATE } from '../actions/socket';
 
-const emptyState: SOA<TorrentResource> = {
+const EMPTY_STATE: Readonly<SOA<TorrentResource>> = {
   availability: [],
   comment: [],
   created: [],
@@ -36,23 +36,12 @@ const emptyState: SOA<TorrentResource> = {
   transferred_up: [],
   type: [],
   user_data: [],
-  length: 0,
 };
 
-const torrentKeys = exactKeys(emptyState);
-
-const findFreeSlot = (array: any[]) => {
-  for (let i = 0; i < array.length; i += 1) {
-    if (array[i] === undefined) {
-      return i;
-    }
-  }
-
-  return array.length;
-};
+const TORRENT_KEYS = exactKeys(EMPTY_STATE);
 
 export const torrentReducer: Reducer<SOA<TorrentResource>, StoreAction> = (
-  state = emptyState,
+  state = EMPTY_STATE,
   action
 ) => {
   switch (action.type) {
@@ -66,13 +55,9 @@ export const torrentReducer: Reducer<SOA<TorrentResource>, StoreAction> = (
             const i = draft.id.indexOf(id);
 
             if (i === -1) {
-              const free = findFreeSlot(draft.id);
-
-              draft.length += 1;
-
-              draft.id[free] = id;
+              draft.id.push(id);
               exactEntries(rest).forEach(([key, value]) => {
-                draft[key][free] = value as any;
+                draft[key].push(value);
               });
             } else {
               exactEntries(rest).forEach(([key, value]) => {
@@ -87,16 +72,13 @@ export const torrentReducer: Reducer<SOA<TorrentResource>, StoreAction> = (
           const i = state.id.indexOf(id);
           if (i === -1) return;
 
-          draft.length -= 1;
-
-          torrentKeys.forEach((key) => {
-            if (key === 'length') return;
-            delete draft[key][i];
+          TORRENT_KEYS.forEach((key) => {
+            draft[key].splice(i, 1);
           });
         });
       });
     case 'SOCKET_UPDATE':
-      return action.state === SOCKET_STATE.CONNECTING ? emptyState : state;
+      return action.state === SOCKET_STATE.CONNECTING ? EMPTY_STATE : state;
     default:
       return state;
   }

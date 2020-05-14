@@ -1,12 +1,7 @@
 import React, { useCallback, CSSProperties } from 'react';
-import {
-  TorrentResource,
-  SynapseId,
-  TorrentStatus,
-} from '../types/SynapseProtocol';
+import { SynapseId, TorrentStatus } from '../types/SynapseProtocol';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { State } from '../types/Store';
-// import selectTorrent, { EXCLUSIVE } from '../actions/selectionOld';
 import { TorrentCard } from './TorrentCard';
 import ws_send from '../socket';
 import { makeSynapseConnection } from '../SynapseConnection';

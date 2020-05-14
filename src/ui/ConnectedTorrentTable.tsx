@@ -10,14 +10,13 @@ interface Props {
   onSelectTorrent: (id: SynapseId) => void;
 }
 
-const memoizedTorrentIdsSelector = createSelector(
+const sortedTorrentsSelector = createSelector(
   (store: State) => store.torrents.id,
   (store: State) => store.torrents.name,
-  (store: State) => store.torrents.length,
-  (ids, names, count) => {
+  (ids, names) => {
     const namesById: { [id: string]: string | null } = {};
 
-    for (let i = 0; i < count; i += 1) {
+    for (let i = 0; i < ids.length; i += 1) {
       namesById[ids[i]] = names[i];
     }
 
@@ -37,7 +36,7 @@ export const ConnectedTorrentTable: React.FC<Props> = ({
   className,
   onSelectTorrent,
 }) => {
-  const torrents = useSelector(memoizedTorrentIdsSelector);
+  const torrents = useSelector(sortedTorrentsSelector);
 
   return (
     <TorrentList
