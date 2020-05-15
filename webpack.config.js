@@ -5,7 +5,7 @@ const defines = {
   DEFAULT_WS_URI: process.env.WEBSOCKET_URI || 'ws://127.0.0.1:8412/',
 };
 
-module.exports = {
+module.exports = (env, argv) => ({
   devtool: 'source-map',
   entry: './src/index.js',
   mode: 'development',
@@ -22,5 +22,13 @@ module.exports = {
   plugins: [new webpack.EnvironmentPlugin(defines)],
   resolve: {
     extensions: ['.ts', '.tsx', '.js'],
+    alias: {
+      'react-dom': argv.mode === 'production' ? 'react-dom' : '@hot-loader/react-dom',
+    },
   },
-};
+  devServer: {
+    contentBase: __dirname,
+    port: 3030,
+    hot: true,
+  },
+});
