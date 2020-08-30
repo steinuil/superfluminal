@@ -30,6 +30,7 @@ interface Props {
   onAddTorrent: () => void;
   onSettings: () => void;
 }
+
 export const TopBar: React.FC<Props> = ({ onAddTorrent, onSettings }) => {
   const [query, setQuery] = useState('');
 

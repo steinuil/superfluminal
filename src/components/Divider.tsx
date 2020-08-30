@@ -6,20 +6,19 @@ interface Props {
 }
 
 const useStyles = createUseStyles({
-  divider: (props: Props) =>
-    Object.assign(
-      { backgroundColor: '#4f4446' },
-      props.vertical
-        ? {
-            width: '1px',
-            alignSelf: 'stretch',
-            flexShrink: 0,
-          }
-        : {
-            height: '1px',
-            width: '100%',
-          }
-    ),
+  divider: (props: Props) => ({
+    backgroundColor: '#4f4446',
+    ...(props.vertical
+      ? {
+          width: '1px',
+          alignSelf: 'stretch',
+          flexShrink: 0,
+        }
+      : {
+          height: '1px',
+          width: '100%',
+        }),
+  }),
 });
 
 export const Divider: React.FC<Props> = ({ vertical }) => {

@@ -7,6 +7,7 @@ export function makeDirTree(paths: string[][]): DirTree[] {
     .map(([file]) => file)
     .sort();
 
+  // https://stackoverflow.com/a/21320309
   const byDir: Record<string, string[][]> = Object.create(null);
 
   paths
