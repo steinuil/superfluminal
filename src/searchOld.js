@@ -1,5 +1,3 @@
-import numeral from "numeral";
-import query from 'query-string';
 import { filter_subscribe } from './actions/filter_subscribe';
 import { push_query } from './actions/routing';
 
@@ -32,11 +30,11 @@ export function search_criteria(text) {
         }
         return { op: "ilike", field, value };
       }
-      if (!isNaN(numeral(value).value())) {
+      if (!isNaN(parseInt(value, 10))) {
         return {
           op,
           field,
-          value: numeral(value).value()
+          value: parseInt(value, 10)
         };
       }
       return { op, field, value };
@@ -49,13 +47,7 @@ export function search_criteria(text) {
 }
 
 export function search_qs(text) {
-  const qs = query.stringify({
-    ...query.parse(location.search),
-    s: text || undefined
-  });
-  return `${
-    location.pathname === "/" ? location.pathname : ""
-  }${qs && "?" + qs}`;
+  return location.pathname === "/" ? location.pathname : ""
 }
 
 export function update_filter(text, fs, location, dispatch) {

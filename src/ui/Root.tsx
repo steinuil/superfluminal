@@ -1,5 +1,4 @@
 import React from 'react';
-import { hot } from 'react-hot-loader/root';
 
 import { store } from '../Store';
 import { Provider } from 'react-redux';
@@ -11,4 +10,4 @@ const Root = () => (
   </Provider>
 );
 
-export default hot(Root);
+export default Root;
