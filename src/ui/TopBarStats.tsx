@@ -5,20 +5,15 @@ import { FiArrowUp, FiArrowDown } from 'react-icons/fi';
 import { TextSingleLine } from '../components/TextSingleLine';
 import { fmtBitrateBin } from '../Units';
 import { State } from '../types/Store';
-import { useSelector, shallowEqual } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 interface Props {
   className?: string;
 }
 
 export const TopBarStats: React.FC<Props> = ({ className }) => {
-  const { up, down } = useSelector<State, Record<'up' | 'down', number>>(
-    ({ server }) => ({
-      up: server.rate_up,
-      down: server.rate_down,
-    }),
-    shallowEqual
-  );
+  const up = useSelector<State, number>(({ server }) => server.rate_up);
+  const down = useSelector<State, number>(({ server }) => server.rate_down);
 
   return (
     <Stack spacing="4px" className={className}>

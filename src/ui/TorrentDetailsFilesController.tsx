@@ -10,14 +10,16 @@ interface Props {
   id: SynapseId;
 }
 
-const filesSelector = createSelector(
+const fileByIdSelector = createSelector(
   (state: State) => state.files,
   (_: State, id: SynapseId) => id,
   (files, id) => Object.values(files).filter((f) => f.torrent_id === id)
 );
 
 export const TorrentDetailsFilesController: React.FC<Props> = ({ id }) => {
-  const files = useSelector<State, FileResource[]>((s) => filesSelector(s, id));
+  const files = useSelector<State, FileResource[]>((s) =>
+    fileByIdSelector(s, id)
+  );
 
   const handleValidateResources = useCallback(() => {
     ws_send('VALIDATE_RESOURCES', { ids: [id] });

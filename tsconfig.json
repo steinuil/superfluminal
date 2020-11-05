@@ -10,7 +10,9 @@
     "moduleResolution": "node",
     "allowJs": true,
     "esModuleInterop": true,
-    "types": ["jest"]
+    "types": ["jest"],
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
   },
   "include": ["src/**/*"]
 }

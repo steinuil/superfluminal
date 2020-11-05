@@ -7,7 +7,7 @@ const readFile = (file: File) => {
   return new Promise<Buffer>((resolve, reject) => {
     fr.addEventListener('error', reject);
 
-    fr.addEventListener('load', (ev) => {
+    fr.addEventListener('load', () => {
       resolve(fr.result as Buffer);
     });
 
