@@ -10,13 +10,13 @@ import {
   TrackerResource,
   PartialSynapseResource,
 } from './SynapseProtocol';
-import { RouterState } from 'connected-react-router';
 import { Action } from 'redux';
 import Immutable from 'immutable';
 
 // "struct of arrays"
 export type SOA<T extends object> = { [K in keyof T]: T[K][] };
 
+/*
 interface NotConnectedState {
   status: 'NOT_CONNECTED';
   reason: string | null;
@@ -35,6 +35,7 @@ interface ConnectedState {
   } | null;
   torrents: SOA<TorrentResource>;
 }
+*/
 
 // export type StoreState = ConnectedState | NotConnectedState;
 
@@ -68,7 +69,6 @@ export interface ResourceMap<R extends SynapseResource> {
 }
 
 export interface State {
-  router: RouterState;
   socket: {
     uri: string | null;
     password: string | null;

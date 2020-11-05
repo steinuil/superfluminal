@@ -1,7 +1,5 @@
 import thunk from 'redux-thunk';
-import { createBrowserHistory, History } from 'history';
 import { createStore, applyMiddleware, combineReducers, Reducer } from 'redux';
-import { routerMiddleware, connectRouter } from 'connected-react-router';
 
 import socket from './reducers/socket';
 import { selection } from './reducers/Selection';
@@ -12,11 +10,8 @@ import { resourceReducer } from './reducers/Resource';
 import { State } from './types/Store';
 import { torrentReducer } from './reducers/TorrentReducer';
 
-export const history = createBrowserHistory();
-
-const reducer = (history: History) =>
+const reducer =
   combineReducers<State>({
-    router: connectRouter(history),
     socket: socket as Reducer<State['socket']>,
     selection: selection,
     subscribe: subscribe,
@@ -29,6 +24,6 @@ const reducer = (history: History) =>
   });
 
 export const store = createStore(
-  reducer(history),
-  applyMiddleware(thunk, routerMiddleware(history))
+  reducer,
+  applyMiddleware(thunk)
 );

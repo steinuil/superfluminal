@@ -2,7 +2,6 @@ import React from 'react';
 import { AddTorrentForm, TorrentOptions } from './AddTorrentForm';
 import { SelectedTorrent } from './AddTorrentSelect';
 import { uploadTorrentFile, uploadMagnet } from '../UploadTorrent';
-import { push } from 'connected-react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { State } from '../types/Store';
 
@@ -31,7 +30,9 @@ export const AddTorrent: React.FC<Props> = ({ onClose }) => {
   const handleSubmit = (t: SelectedTorrent, options: TorrentOptions) => {
     upload(t, options, socket).then(
       (id) => {
+        /*
         dispatch(push(`/torrents/${id}`));
+        */
         onClose();
       },
       (err) => {

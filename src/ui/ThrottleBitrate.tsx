@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bitrate, BitrateUnit, bitrateToNumber } from '../Bitrate';
+import { Bitrate, BitrateUnit } from '../Bitrate';
 import { Radio } from '../components/Radio';
 import { Stack } from '../components/Stack';
 import { TextInput } from '../components/TextInput';

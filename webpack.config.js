@@ -6,20 +6,12 @@ const defines = {
 };
 
 module.exports = (env, argv) => ({
-  devtool: 'source-map',
-  entry: './src/index.js',
   mode: 'development',
-  output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),
-    publicPath: '/dist/',
-  },
   module: {
     rules: [
       { test: /\.(j|t)sx?$/, exclude: /node_modules/, loader: 'babel-loader' },
     ],
   },
-  plugins: [new webpack.EnvironmentPlugin(defines)],
   resolve: {
     extensions: ['.ts', '.tsx', '.js'],
     alias: {
@@ -27,9 +19,7 @@ module.exports = (env, argv) => ({
     },
   },
   devServer: {
-    contentBase: __dirname,
     host: '0.0.0.0',
     port: 3030,
-    hot: true,
   },
 });

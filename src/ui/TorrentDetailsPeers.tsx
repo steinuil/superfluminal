@@ -1,10 +1,9 @@
-import React, { useMemo, FC } from 'react';
+import React, { FC } from 'react';
 import { createUseStyles } from 'react-jss';
 import { PeerResource } from '../types/SynapseProtocol';
 import { fmtProgress, fmtBitrateBin } from '../Units';
 import { FiArrowUp, FiArrowDown } from 'react-icons/fi';
 import { TextSingleLine } from '../components/TextSingleLine';
-// import { countryCodeToEmoji } from '../GetCountryByIp';
 
 const useStyles = createUseStyles({
   table: {

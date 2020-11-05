@@ -20,7 +20,7 @@ const sortedTorrentsSelector = createSelector(
       namesById[ids[i]] = names[i];
     }
 
-    return ids.slice().sort((aId, bId) => {
+    return ids.slice().sort((aId: SynapseId, bId: SynapseId) => {
       const aName = namesById[aId];
       const bName = namesById[bId];
       if (aName === null && bName === null) return 0;
