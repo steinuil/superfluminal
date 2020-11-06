@@ -19,11 +19,11 @@ export const TopBarStats: React.FC<Props> = ({ className }) => {
     <Stack spacing="4px" className={className}>
       <Columns spacing="4px">
         <FiArrowUp size="14px" />
-        <TextSingleLine fontSize="14px">{fmtBitrateBin(up)}</TextSingleLine>
+        <TextSingleLine fontSize="14px">{fmtBitrateBin(up || 0)}</TextSingleLine>
       </Columns>
       <Columns spacing="4px">
         <FiArrowDown size="14px" />
-        <TextSingleLine fontSize="14px">{fmtBitrateBin(down)}</TextSingleLine>
+        <TextSingleLine fontSize="14px">{fmtBitrateBin(down || 0)}</TextSingleLine>
       </Columns>
     </Stack>
   );

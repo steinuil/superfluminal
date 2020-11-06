@@ -44,7 +44,7 @@ const wordOperation = anyStringOf(
 
 const operation = wordOperation.pipe(
   between(spaces1()),
-  recover<CriterionOp>((f) => ({ kind: 'Soft' })),
+  recover<CriterionOp>(() => ({ kind: 'Soft' })),
   or(symbolOperation.pipe(between(whitespace())))
 );
 
