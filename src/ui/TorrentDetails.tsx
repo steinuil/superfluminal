@@ -7,18 +7,19 @@ import { FiFolder, FiUsers, FiServer, FiSettings } from 'react-icons/fi';
 import { Divider } from '../components/Divider';
 import { Button } from '../components/Button';
 import { FormHeader } from '../components/FormHeader';
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { State } from '../types/Store';
+import { useSelector, shallowEqual } from 'react-redux';
+import { AppState } from '../redux/Store';
 import { SynapseId } from '../types/SynapseProtocol';
 import { c } from '../ClassNames';
 import { useToggle } from '../hooks/UseToggle';
 import { DeleteTorrentForm } from './DeleteTorrentForm';
-import ws_send from '../socket';
 import { selectTorrents } from '../actions/Selection';
 import { TorrentDetailsOptionsController } from './TorrentDetailsOptionsController';
 import { TorrentDetailsFilesController } from './TorrentDetailsFilesController';
 import { TorrentDetailsPeersController } from './TorrentDetailsPeersController';
 import { TorrentDetailsTrackersController } from './TorrentDetailsTrackersController';
+import useAppDispatch from '../hooks/UseAppDispatch';
+import { synapseSend } from '../redux/Synapse';
 
 const useStyles = createUseStyles({
   selectedTab: {
@@ -44,7 +45,7 @@ interface SelectorProps {
 export const TorrentDetails: React.FC<Props> = ({ torrentId, onClose }) => {
   const styles = useStyles();
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(selectTorrents([torrentId]));
@@ -54,7 +55,7 @@ export const TorrentDetails: React.FC<Props> = ({ torrentId, onClose }) => {
   }, [torrentId]);
 
   const { name, size, comment, created, creator, isPrivate } = useSelector<
-    State,
+    AppState,
     SelectorProps
   >((s) => {
     const i = s.torrents.id.indexOf(torrentId);
@@ -88,10 +89,10 @@ export const TorrentDetails: React.FC<Props> = ({ torrentId, onClose }) => {
       setDeleteModalOpen(false);
       if (!shouldDelete) return;
       onClose();
-      ws_send('REMOVE_RESOURCE', {
+      dispatch(synapseSend('REMOVE_RESOURCE', {
         id: torrentId,
-        artifacts: alsoDeleteFiles,
-      });
+        artifacts: alsoDeleteFiles
+      }))
     },
     [torrentId, onClose, alsoDeleteFiles]
   );

@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, ReactNode } from 'react';
 import { createUseStyles } from 'react-jss';
 import { c } from '../ClassNames';
 
@@ -19,15 +19,16 @@ interface Props {
   style?: CSSProperties;
   padding?: string;
   background?: string;
+  children: ReactNode;
 }
 
-export const Box: React.FC<Props> = ({
+export const Box = ({
   className,
   style,
   padding,
   background,
   children,
-}) => {
+}: Props) => {
   const styles = useStyles({ padding, background });
 
   return (

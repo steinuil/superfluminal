@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { FC } from 'react';
+import React from 'react';
 import { ThrottleBitrate, Throttle } from './ThrottleBitrate';
 import { Stack } from '../components/Stack';
 import { TextField } from '../components/TextField';
@@ -24,7 +23,7 @@ interface Props {
   setUploadThrottle: (t: Throttle) => void;
 }
 
-export const AddTorrentOptions: FC<Props> = ({
+export const AddTorrentOptions = ({
   startImmediately,
   toggleStartImmediately,
   hasImport,
@@ -40,7 +39,7 @@ export const AddTorrentOptions: FC<Props> = ({
   setDownloadThrottle,
   uploadThrottle,
   setUploadThrottle,
-}) => (
+}: Props) => (
   <Stack spacing="16px">
     <TextField label="Path" type="text" value={path} onChange={setPath} />
     <SelectField

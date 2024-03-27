@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, ReactNode } from 'react';
 import { createUseStyles } from 'react-jss';
 import { c } from '../ClassNames';
 import { onKeyboardSelect } from '../EventHelpers';
@@ -24,16 +24,17 @@ interface Props {
   style?: CSSProperties;
   tabIndex?: number;
   onClick?: () => void;
+  children?: ReactNode;
 }
 
-export const Columns: React.FC<Props> = ({
+export const Columns = ({
   spacing,
-  children,
   className,
   style,
   tabIndex,
   onClick,
-}) => {
+  children,
+}: Props) => {
   const styles = useStyles({ spacing });
 
   return (

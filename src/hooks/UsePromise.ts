@@ -1,6 +1,9 @@
 import { useState, useLayoutEffect } from 'react';
 
-export function usePromise<T>(provider: () => Promise<T>, onError?: (err: unknown) => void) {
+export function usePromise<T>(
+  provider: () => Promise<T>,
+  onError?: (err: unknown) => void
+) {
   const [state, setState] = useState<T | null>(null);
 
   useLayoutEffect(() => {

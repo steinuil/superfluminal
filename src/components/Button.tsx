@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { createUseStyles } from 'react-jss';
 import { c } from '../ClassNames';
 
@@ -23,17 +23,18 @@ interface Props {
   onClick?: () => void;
   disabled?: boolean;
   inline?: boolean;
+  children?: ReactNode;
 }
 
-export const Button: React.FC<Props> = ({
+export const Button = ({
   id,
   className,
   type,
   onClick,
-  children,
   disabled,
   inline,
-}) => {
+  children,
+}: Props) => {
   const styles = useStyles({ inline });
 
   return (

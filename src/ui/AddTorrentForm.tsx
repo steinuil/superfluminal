@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { FC, useState } from 'react';
+import React, { useState } from 'react';
 import { AddTorrentSelect, SelectedTorrent } from './AddTorrentSelect';
 import { AddTorrentOptions } from './AddTorrentOptions';
 import { AddTorrentInfo } from './AddTorrentInfo';
@@ -26,11 +25,7 @@ interface Props {
   onClose: () => void;
 }
 
-export const AddTorrentForm: FC<Props> = ({
-  initialMagnet,
-  onSubmit,
-  onClose,
-}) => {
+export const AddTorrentForm = ({ initialMagnet, onSubmit, onClose }: Props) => {
   const [torrent, setTorrent] = useState<SelectedTorrent | null>(() =>
     initialMagnet
       ? { type: 'MAGNET', magnet: decodeURIComponent(initialMagnet) }

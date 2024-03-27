@@ -6,6 +6,8 @@ import { throttleToNumber } from './hooks/UseThrottle';
 
 const conn = makeSynapseConnection(wsSend);
 
+// TODO: REIMPLEMENT ALL AS STATE MACHINE IN REDUX
+
 export const uploadMagnet = async (
   magnet: string,
   options: TorrentOptions

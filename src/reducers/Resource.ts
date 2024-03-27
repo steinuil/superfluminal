@@ -1,6 +1,6 @@
 import { SynapseResource, PartialResource } from '../types/SynapseProtocol';
 import { Reducer } from 'redux';
-import { ResourceMap, StoreAction } from '../types/Store';
+import { ResourceMap, AppAction } from '../redux/Store';
 import produce from 'immer';
 import { SOCKET_STATE } from '../actions/socket';
 
@@ -8,7 +8,7 @@ export const resourceReducer = <
   T extends Exclude<SynapseResource['type'], 'server'>
 >(
   type: T
-): Reducer<ResourceMap<Extract<SynapseResource, { type: T }>>, StoreAction> => (
+): Reducer<ResourceMap<Extract<SynapseResource, { type: T }>>, AppAction> => (
   state = {},
   action
 ) => {

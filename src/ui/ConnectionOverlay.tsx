@@ -3,11 +3,16 @@ import { createUseStyles } from 'react-jss';
 import { Modal2 } from '../components/Modal';
 import { ConnectionForm } from './ConnectionForm';
 import { useToggle } from '../hooks/UseToggle';
-import { useSelector, useDispatch } from 'react-redux';
-import { State } from '../types/Store';
-import { socket_uri, socket_update, SOCKET_STATE } from '../actions/socket';
-import { ws_init } from '../socket';
-import { filter_subscribe } from '../actions/filter_subscribe';
+import { useSelector } from 'react-redux';
+import { AppState } from '../redux/Store';
+import useAppDispatch from '../hooks/UseAppDispatch';
+import {
+  clearCredentials,
+  ConnectionCredentials,
+  updateCredentials,
+} from '../redux/Credentials';
+import { ConnectionStatus } from '../redux/ConnectionStatus';
+import { synapseConnect } from '../redux/Synapse';
 
 const useStyles = createUseStyles({
   container: {
@@ -16,55 +21,37 @@ const useStyles = createUseStyles({
   },
 });
 
-interface Props {}
+export const ConnectionOverlay = () => {
+  const credentials = useSelector<AppState, ConnectionCredentials | null>(
+    (s) => s.credentials
+  );
 
-export const ConnectionOverlay: React.FC<Props> = ({}) => {
-  const [uri, setUri] = useState(
-    () => localStorage.getItem('autoconnect') || ''
-  );
-  const [password, setPassword] = useState(
-    () => localStorage.getItem('password') || ''
-  );
+  const [uri, setUri] = useState(credentials?.uri || '');
+  const [password, setPassword] = useState(credentials?.password || '');
   const [autoConnect, toggleAutoConnect] = useToggle(uri !== '');
 
-  const socket = useSelector<State, State['socket']>((s) => s.socket);
-  const dispatch = useDispatch();
+  const connectionStatus = useSelector<AppState, ConnectionStatus>(
+    (s) => s.connectionStatus
+  );
+  const dispatch = useAppDispatch();
 
   const handleSubmit = () => {
     if (autoConnect) {
-      localStorage.setItem('autoconnect', uri);
-      localStorage.setItem('password', password);
+      dispatch(updateCredentials({ uri, password }));
     } else {
-      localStorage.removeItem('autoconnect');
-      localStorage.removeItem('password');
+      dispatch(clearCredentials());
     }
 
-    const fullUri = { uri, password };
-
-    dispatch(socket_uri(fullUri));
-    dispatch(socket_update(SOCKET_STATE.CONNECTING));
-    ws_init(
-      fullUri,
-      () => {
-        dispatch(socket_update(SOCKET_STATE.CONNECTED));
-        dispatch(filter_subscribe('torrent', []));
-        dispatch(filter_subscribe('server'));
-      },
-      () => {
-        dispatch(
-          socket_update(SOCKET_STATE.DISCONNECTED, 'You were disconnected.')
-        );
-      }
-    );
+    dispatch(synapseConnect({ uri, password }));
   };
 
-  const isOpen = socket.state !== 'SOCKET_CONNECTED';
+  const isOpen = connectionStatus !== 'CONNECTED';
 
   const styles = useStyles();
 
   return (
     <Modal2 isOpen={isOpen}>
-      {socket.state === 'SOCKET_DISCONNECTED' ? (
+      {connectionStatus === 'NOT_CONNECTED' ? (
         <div className={styles.container}>
           <ConnectionForm
             uri={uri}
@@ -76,7 +63,7 @@ export const ConnectionOverlay: React.FC<Props> = ({}) => {
             onSubmit={handleSubmit}
           />
         </div>
-      ) : socket.state === 'SOCKET_CONNECTING' ? (
+      ) : connectionStatus === 'CONNECTING' ? (
         'Loading...'
       ) : null}
     </Modal2>

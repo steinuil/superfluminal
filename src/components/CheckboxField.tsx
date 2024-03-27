@@ -39,11 +39,7 @@ interface Props {
   onChange: () => void;
 }
 
-export const CheckboxField: React.FC<Props> = ({
-  label,
-  checked,
-  onChange,
-}) => {
+export const CheckboxField = ({ label, checked, onChange }: Props) => {
   const styles = useStyles({ checked });
 
   const id = useId('checkbox-field');

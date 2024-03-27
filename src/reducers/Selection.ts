@@ -1,9 +1,9 @@
 import { Reducer } from 'redux';
 import { SynapseId } from '../types/SynapseProtocol';
-import { StoreAction } from '../types/Store';
+import { AppAction } from '../redux/Store';
 import Immutable from 'immutable';
 
-export const selection: Reducer<Immutable.Set<SynapseId>, StoreAction> = (
+export const selection: Reducer<Immutable.Set<SynapseId>, AppAction> = (
   state = Immutable.Set(),
   action
 ) => {

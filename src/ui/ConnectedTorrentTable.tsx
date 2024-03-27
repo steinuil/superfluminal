@@ -2,7 +2,7 @@ import React from 'react';
 import { TorrentList } from './TorrentList';
 import { SynapseId } from '../types/SynapseProtocol';
 import { useSelector } from 'react-redux';
-import { State } from '../types/Store';
+import { AppState } from '../redux/Store';
 import { createSelector } from 'reselect';
 
 interface Props {
@@ -11,8 +11,8 @@ interface Props {
 }
 
 const sortedTorrentsSelector = createSelector(
-  (store: State) => store.torrents.id,
-  (store: State) => store.torrents.name,
+  (store: AppState) => store.torrents.id,
+  (store: AppState) => store.torrents.name,
   (ids, names) => {
     const namesById: { [id: string]: string | null } = {};
 

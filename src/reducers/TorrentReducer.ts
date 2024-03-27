@@ -1,11 +1,11 @@
 import produce from 'immer';
 import { Reducer } from 'redux';
 import { TorrentResource, PartialResource } from '../types/SynapseProtocol';
-import { SOA, StoreAction } from '../types/Store';
+import { SOA, AppAction } from '../redux/Store';
 import { exactEntries, exactKeys } from '../Exact';
 import { SOCKET_STATE } from '../actions/socket';
 
-const EMPTY_STATE: Readonly<SOA<TorrentResource>> = {
+export const EMPTY_STATE: Readonly<SOA<TorrentResource>> = {
   availability: [],
   comment: [],
   created: [],
@@ -40,7 +40,7 @@ const EMPTY_STATE: Readonly<SOA<TorrentResource>> = {
 
 const TORRENT_KEYS = exactKeys(EMPTY_STATE);
 
-export const torrentReducer: Reducer<SOA<TorrentResource>, StoreAction> = (
+export const torrentReducer: Reducer<SOA<TorrentResource>, AppAction> = (
   state = EMPTY_STATE,
   action
 ) => {

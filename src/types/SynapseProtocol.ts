@@ -295,7 +295,6 @@ export interface PauseTorrent extends SynapseMessage<'PAUSE_TORRENT'> {
 }
 
 export interface ResumeTorrent extends SynapseMessage<'RESUME_TORRENT'> {
-  type: 'RESUME_TORRENT';
   id: SynapseId;
 }
 
@@ -307,6 +306,10 @@ export interface AddPeer extends SynapseMessage<'ADD_PEER'> {
 export interface AddTracker extends SynapseMessage<'ADD_TRACKER'> {
   id: SynapseId;
   uri: string;
+}
+
+export interface UpdateTracker extends SynapseMessage<'UPDATE_TRACKER'> {
+  id: SynapseId;
 }
 
 export interface ValidateResources
@@ -331,5 +334,6 @@ export type SynapseClientMessage =
   | ResumeTorrent
   | AddPeer
   | AddTracker
+  | UpdateTracker
   | ValidateResources
   | PurgeDns;

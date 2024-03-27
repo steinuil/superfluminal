@@ -21,7 +21,7 @@ const useStyles = createUseStyles({
   }),
 });
 
-export const Divider: React.FC<Props> = ({ vertical }) => {
+export const Divider = ({ vertical }: Props) => {
   const styles = useStyles({ vertical });
 
   return <div className={styles.divider} />;

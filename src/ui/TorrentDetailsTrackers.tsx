@@ -5,7 +5,8 @@ import { TrackerResource, SynapseId } from '../types/SynapseProtocol';
 import { Columns } from '../components/Columns';
 import { FiRefreshCw } from 'react-icons/fi';
 import { onKeyboardSelect } from '../EventHelpers';
-import ws_send from '../socket';
+import useAppDispatch from '../hooks/UseAppDispatch';
+import { synapseSend } from '../redux/Synapse';
 
 const useStyles = createUseStyles({
   url: {
@@ -66,7 +67,10 @@ export const TorrentDetailsTrackers: React.FC<Props> = ({ trackers }) => {
     .slice()
     .sort((left, right) => left.url.localeCompare(right.url));
 
-  const handleRefresh = (id: SynapseId) => ws_send('UPDATE_TRACKER', { id });
+  const dispatch = useAppDispatch();
+
+  const handleRefresh = (id: SynapseId) =>
+    dispatch(synapseSend('UPDATE_TRACKER', { id }));
 
   return (
     <Stack spacing="8px">

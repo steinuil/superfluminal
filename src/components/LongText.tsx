@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { createUseStyles } from 'react-jss';
 
 const useStyles = createUseStyles({
@@ -7,10 +7,12 @@ const useStyles = createUseStyles({
   },
 });
 
-interface Props {}
+interface Props {
+  children?: ReactNode;
+}
 
-export const LongText: React.FC<Props> = ({ children }) => {
+export function LongText({ children }: Props) {
   const styles = useStyles();
 
   return <div className={styles.text}>{children}</div>;
-};
+}

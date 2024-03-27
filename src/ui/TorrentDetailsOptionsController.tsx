@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { TorrentDetailsOptions } from './TorrentDetailsOptions';
 import { Priority, TorrentStrategy, SynapseId } from '../types/SynapseProtocol';
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { State } from '../types/Store';
+import { useSelector, shallowEqual } from 'react-redux';
+import { AppState } from '../redux/Store';
 import { useThrottle } from '../hooks/UseThrottle';
 import { updateResource } from '../actions/resources';
+import useAppDispatch from '../hooks/UseAppDispatch';
 
 interface SelectorProps {
   path: string;
@@ -19,9 +20,9 @@ interface Props {
 }
 
 export const TorrentDetailsOptionsController: React.FC<Props> = ({ id }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
-  const t = useSelector<State, SelectorProps>((s) => {
+  const t = useSelector<AppState, SelectorProps>((s) => {
     const i = s.torrents.id.indexOf(id);
 
     return {

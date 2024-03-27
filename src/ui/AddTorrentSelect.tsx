@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { FC, useState, useMemo, useRef } from 'react';
+import React from 'react';
+import { FC, useState, useMemo, useRef, ChangeEvent } from 'react';
 import { Button } from '../components/Button';
 import { Stack } from '../components/Stack';
 import { TextField } from '../components/TextField';
@@ -11,7 +11,7 @@ interface SelectTorrentFileProps {
 }
 
 const SelectTorrentFile: FC<SelectTorrentFileProps> = ({ onSubmit }) => {
-  const handleChangeFile = (ev: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeFile = (ev: ChangeEvent<HTMLInputElement>) => {
     const file = ev.target.files && ev.target.files[0];
     if (!file) return;
     onSubmit(file);

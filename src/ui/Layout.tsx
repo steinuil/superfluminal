@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { ConnectedTorrentTable } from './ConnectedTorrentTable';
 import { createUseStyles } from 'react-jss';
 import { AddTorrent } from './AddTorrent';
@@ -7,6 +7,17 @@ import { ConnectionOverlay } from './ConnectionOverlay';
 import { SynapseId } from '../types/SynapseProtocol';
 import { TorrentDetails } from './TorrentDetails';
 import { ServerInfo } from './ServerInfo';
+import { useSelector } from 'react-redux';
+import { AppState } from '../redux/Store';
+import useAppDispatch from '../hooks/UseAppDispatch';
+import { synapseInitSubscriptions } from '../redux/Synapse';
+import {
+  closeSidebar,
+  showAddTorrent,
+  showSettings,
+  showTorrentInfo,
+  SidebarState,
+} from '../redux/Ui';
 
 interface StyleProps {
   isSidebarOpen: boolean;
@@ -96,23 +107,32 @@ const useStyles = createUseStyles({
   },
 });
 
-interface Props {}
+// type SidebarState =
+//   | { state: 'ADD_TORRENT' }
+//   | { state: 'SETTINGS' }
+//   | { state: 'TORRENT_INFO'; torrent: SynapseId };
 
-type SidebarState =
-  | { state: 'ADD_TORRENT' }
-  | { state: 'SETTINGS' }
-  | { state: 'TORRENT_INFO'; torrent: SynapseId };
+export function Layout() {
+  const dispatch = useAppDispatch();
 
-export const Layout: React.FC<Props> = () => {
-  const [sidebar, setSidebar] = useState<SidebarState | null>(null);
+  const handleClose = useCallback(() => dispatch(closeSidebar()), []);
 
-  const handleClose = useCallback(() => setSidebar(null), []);
+  const sidebarState = useSelector<AppState, SidebarState>((s) => s.ui.sidebar);
 
   const handleSelectTorrent = useCallback((torrent: SynapseId) => {
-    setSidebar({ state: 'TORRENT_INFO', torrent });
+    dispatch(showTorrentInfo(torrent));
   }, []);
 
-  const styles = useStyles({ isSidebarOpen: sidebar !== null });
+  const styles = useStyles({ isSidebarOpen: sidebarState.type !== 'CLOSED' });
+
+  const isConnected = useSelector<AppState, boolean>(
+    (s) => s.connectionStatus === 'CONNECTED'
+  );
+
+  useEffect(() => {
+    if (!isConnected) return;
+    dispatch(synapseInitSubscriptions());
+  }, [isConnected]);
 
   return (
     <div className={styles.root}>
@@ -120,22 +140,22 @@ export const Layout: React.FC<Props> = () => {
       <div className={styles.main}>
         <div className={styles.header}>
           <TopBar
-            onAddTorrent={() => setSidebar({ state: 'ADD_TORRENT' })}
-            onSettings={() => setSidebar({ state: 'SETTINGS' })}
+            onAddTorrent={() => dispatch(showAddTorrent())}
+            onSettings={() => dispatch(showSettings())}
           />
         </div>
         <div className={styles.torrents}>
           <ConnectedTorrentTable onSelectTorrent={handleSelectTorrent} />
         </div>
       </div>
-      {sidebar && (
+      {sidebarState.type !== 'CLOSED' && (
         <aside className={styles.sidebar}>
-          {sidebar.state === 'ADD_TORRENT' ? (
+          {sidebarState.type === 'ADD_TORRENT' ? (
             <AddTorrent onClose={handleClose} />
-          ) : sidebar.state === 'TORRENT_INFO' ? (
+          ) : sidebarState.type === 'TORRENT_INFO' ? (
             <TorrentDetails
-              key={sidebar.torrent}
-              torrentId={sidebar.torrent}
+              key={sidebarState.torrent}
+              torrentId={sidebarState.torrent}
               onClose={handleClose}
             />
           ) : (
@@ -145,4 +165,4 @@ export const Layout: React.FC<Props> = () => {
       )}
     </div>
   );
-};
+}

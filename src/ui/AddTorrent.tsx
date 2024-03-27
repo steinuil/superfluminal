@@ -2,37 +2,26 @@ import React from 'react';
 import { AddTorrentForm, TorrentOptions } from './AddTorrentForm';
 import { SelectedTorrent } from './AddTorrentSelect';
 import { uploadTorrentFile, uploadMagnet } from '../UploadTorrent';
-import { useDispatch, useSelector } from 'react-redux';
-import { State } from '../types/Store';
 
 interface Props {
   onClose: () => void;
 }
 
-const upload = (
-  t: SelectedTorrent,
-  options: TorrentOptions,
-  socket: State['socket']
-) => {
+const upload = (t: SelectedTorrent, options: TorrentOptions) => {
   switch (t.type) {
     case 'FILE':
-      return uploadTorrentFile(t.file, options, socket);
+      return uploadTorrentFile(t.file, options, undefined);
     case 'MAGNET':
       return uploadMagnet(t.magnet, options);
   }
 };
 
 export const AddTorrent: React.FC<Props> = ({ onClose }) => {
-  const dispatch = useDispatch();
-
-  const socket = useSelector<State, State['socket']>(({ socket }) => socket);
-
+  // TODO: MOVE INTO REDUX!! and then also move the UI state that tells whether
+  // this addtorrent thing is open into redux.
   const handleSubmit = (t: SelectedTorrent, options: TorrentOptions) => {
-    upload(t, options, socket).then(
+    upload(t, options).then(
       (id) => {
-        /*
-        dispatch(push(`/torrents/${id}`));
-        */
         onClose();
       },
       (err) => {

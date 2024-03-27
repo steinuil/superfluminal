@@ -1,8 +1,7 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { State } from '../types/Store';
+import { useSelector } from 'react-redux';
+import { AppState } from '../redux/Store';
 import { ServerResource } from '../types/SynapseProtocol';
-import { ws_disconnect } from '../socket';
 import { useThrottle } from '../hooks/UseThrottle';
 import { Stack } from '../components/Stack';
 import { FormHeader } from '../components/FormHeader';
@@ -12,17 +11,19 @@ import { Button } from '../components/Button';
 import { Divider } from '../components/Divider';
 import { ThrottleBitrate } from './ThrottleBitrate';
 import { updateResource } from '../actions/resources';
+import useAppDispatch from '../hooks/UseAppDispatch';
+import { synapseDisconnect, synapseSend } from '../redux/Synapse';
 
 interface Props {
   onClose: () => void;
 }
 
 export const ServerInfo: React.FC<Props> = ({ onClose }) => {
-  const server = useSelector<State, ServerResource>((s) => s.server) || {};
-  const dispatch = useDispatch();
+  const server = useSelector<AppState, ServerResource>((s) => s.server) || {};
+  const dispatch = useAppDispatch();
 
-  const handleDisconnect = ws_disconnect;
-  const handlePurgeDns = () => dispatch('PURGE_DNS');
+  const handleDisconnect = () => dispatch(synapseDisconnect());
+  const handlePurgeDns = () => dispatch(synapseSend('PURGE_DNS', {}));
 
   const [dlThrottle, setDlThrottle, dlThrottleRaw] = useThrottle(
     server.throttle_down

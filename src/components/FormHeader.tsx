@@ -21,7 +21,7 @@ interface Props {
   onClose: () => void;
 }
 
-export const FormHeader: React.FC<Props> = ({ onClose, title }) => {
+export const FormHeader = ({ onClose, title }: Props) => {
   const styles = useStyles();
 
   return (

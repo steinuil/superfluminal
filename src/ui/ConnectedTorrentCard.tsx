@@ -1,16 +1,11 @@
 import React, { useCallback, CSSProperties } from 'react';
 import { SynapseId, TorrentStatus } from '../types/SynapseProtocol';
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { State } from '../types/Store';
+import { useSelector, shallowEqual } from 'react-redux';
+import { AppState } from '../redux/Store';
 import { TorrentCard } from './TorrentCard';
-import ws_send from '../socket';
-import { makeSynapseConnection } from '../SynapseConnection';
 import { selectTorrents } from '../actions/Selection';
-
-const conn = makeSynapseConnection(ws_send);
-
-const pause = (action: 'RESUME_TORRENT' | 'PAUSE_TORRENT', id: SynapseId) =>
-  conn.send(action, { id });
+import useAppDispatch from '../hooks/UseAppDispatch';
+import { synapseSend } from '../redux/Synapse';
 
 interface Props {
   id: SynapseId;
@@ -49,7 +44,7 @@ export const ConnectedTorrentCard: React.FC<Props> = ({
     rateDown,
     availability,
     selected,
-  } = useSelector<State, Selected>((s) => {
+  } = useSelector<AppState, Selected>((s) => {
     const i = s.torrents.id.indexOf(id);
 
     return {
@@ -66,14 +61,18 @@ export const ConnectedTorrentCard: React.FC<Props> = ({
     };
   }, shallowEqual);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const handleSelect = useCallback(() => {
     dispatch(selectTorrents([id]));
   }, [id, dispatch]);
 
   const handleTogglePaused = useCallback(() => {
-    pause(status === 'paused' ? 'RESUME_TORRENT' : 'PAUSE_TORRENT', id);
+    dispatch(
+      synapseSend(status === 'paused' ? 'RESUME_TORRENT' : 'PAUSE_TORRENT', {
+        id,
+      })
+    );
   }, [status, id]);
 
   return (

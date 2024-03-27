@@ -1,12 +1,12 @@
 import { SynapseId } from '../types/SynapseProtocol';
-import { StoreAction, State } from '../types/Store';
+import { AppAction, AppState } from '../redux/Store';
 import { ThunkAction } from 'redux-thunk';
 import { filter_subscribe, filter_unsubscribe } from './filter_subscribe';
 import { unsubscribe } from './subscribe';
 
 export const selectTorrents = (
   ids: SynapseId[]
-): ThunkAction<void, State, void, StoreAction> => {
+): ThunkAction<void, AppState, void, AppAction> => {
   return (dispatch, getState) => {
     const prevSelection = getState().selection;
 
